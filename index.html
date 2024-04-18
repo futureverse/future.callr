@@ -47,7 +47,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">future.callr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.2-9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.2-9001</span>
       </span>
     </div>
 
@@ -105,6 +105,9 @@
       <a href="https://future.callr.futureverse.org">future.callr</a>
     </li>
     <li>
+      <a href="https://future.mirai.futureverse.org" class="external-link">future.mirai</a>
+    </li>
+    <li>
       <a href="https://future.tests.futureverse.org" class="external-link">future.tests</a>
     </li>
     <li>
@@ -124,9 +127,6 @@
     </li>
     <li>
       <a href="https://future.tools.futureverse.org" class="external-link">future.tools (experimental)</a>
-    </li>
-    <li>
-      <a href="https://future.mirai.futureverse.org" class="external-link">future.mirai (experimental)</a>
     </li>
     <li>
       <a href="https://future.mapreduce.futureverse.org" class="external-link">future.mapreduce (experimental)</a>
@@ -210,7 +210,7 @@
 <div class="section level3">
 <h3 id="each-callr-future-uses-a-fresh-r-session">Each callr future uses a fresh R session<a class="anchor" aria-label="anchor" href="#each-callr-future-uses-a-fresh-r-session"></a>
 </h3>
-<p>When using <code>callr</code> futures, each future is resolved in a fresh background R session which ends as soon as the value of the future has been collected. In contrast, <code>multisession</code> futures are resolved in background R worker sessions that serve multiple futures over their life spans. The advantage with using a new R process for each future is that it is that the R environment is guaranteed not to be contaminated by previous futures, e.g. memory allocations, finalizers, modified options, and loaded and attached packages. The disadvantage, is an added overhead of launching a new R process. (At the moment, I am neither aware of formal benchmarking of this extra overhead nor of performance comparisons of <code>callr</code> to alternative future backends.)</p>
+<p>When using <code>callr</code> futures, each future is resolved in a fresh background R session which ends as soon as the value of the future has been collected. In contrast, <code>multisession</code> futures are resolved in background R worker sessions that serve multiple futures over their life spans. The advantage of using a new R process for each future is that the R environment is guaranteed not to be contaminated by previous futures, e.g. memory allocations, finalizers, modified options, and loaded and attached packages. The disadvantage, is an added overhead of launching a new R process. (At the moment, I am neither aware of formal benchmarking of this extra overhead nor of performance comparisons of <code>callr</code> to alternative future backends.)</p>
 </div>
 <div class="section level3">
 <h3 id="more-than-125-parallel-callr-futures">More than 125 parallel callr futures<a class="anchor" aria-label="anchor" href="#more-than-125-parallel-callr-futures"></a>
@@ -289,7 +289,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Henrik Bengtsson <br><small class="roles"> Author, maintainer, copyright holder </small>  </li>
+<li>Henrik Bengtsson <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0002-7579-5165" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 

@@ -47,7 +47,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">future.callr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.2-9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.2-9001</span>
       </span>
     </div>
 
@@ -105,6 +105,9 @@
       <a href="https://future.callr.futureverse.org">future.callr</a>
     </li>
     <li>
+      <a href="https://future.mirai.futureverse.org" class="external-link">future.mirai</a>
+    </li>
+    <li>
       <a href="https://future.tests.futureverse.org" class="external-link">future.tests</a>
     </li>
     <li>
@@ -124,9 +127,6 @@
     </li>
     <li>
       <a href="https://future.tools.futureverse.org" class="external-link">future.tools (experimental)</a>
-    </li>
-    <li>
-      <a href="https://future.mirai.futureverse.org" class="external-link">future.mirai (experimental)</a>
     </li>
     <li>
       <a href="https://future.mapreduce.futureverse.org" class="external-link">future.mapreduce (experimental)</a>
@@ -237,14 +237,13 @@ machine)</td>
 fresh background R session which ends as soon as the value of the future
 has been collected. In contrast, <code>multisession</code> futures are
 resolved in background R worker sessions that serve multiple futures
-over their life spans. The advantage with using a new R process for each
-future is that it is that the R environment is guaranteed not to be
-contaminated by previous futures, e.g. memory allocations, finalizers,
-modified options, and loaded and attached packages. The disadvantage, is
-an added overhead of launching a new R process. (At the moment, I am
-neither aware of formal benchmarking of this extra overhead nor of
-performance comparisons of <code>callr</code> to alternative future
-backends.)</p>
+over their life spans. The advantage of using a new R process for each
+future is that the R environment is guaranteed not to be contaminated by
+previous futures, e.g. memory allocations, finalizers, modified options,
+and loaded and attached packages. The disadvantage, is an added overhead
+of launching a new R process. (At the moment, I am neither aware of
+formal benchmarking of this extra overhead nor of performance
+comparisons of <code>callr</code> to alternative future backends.)</p>
 </div>
 <div class="section level3">
 <h3 id="more-than-125-parallel-callr-futures">More than 125 parallel callr futures<a class="anchor" aria-label="anchor" href="#more-than-125-parallel-callr-futures"></a>

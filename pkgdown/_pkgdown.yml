@@ -31,6 +31,8 @@ navbar:
         href: https://future.batchtools.futureverse.org
       - text: future.callr 
         href: https://future.callr.futureverse.org
+      - text: future.mirai 
+        href: https://future.mirai.futureverse.org
       - text: future.tests 
         href: https://future.tests.futureverse.org
       - text: globals 
@@ -45,8 +47,6 @@ navbar:
         href: https://BiocParallel.FutureParam.futureverse.org
       - text: future.tools (experimental)
         href: https://future.tools.futureverse.org
-      - text: future.mirai (experimental)
-        href: https://future.mirai.futureverse.org
       - text: future.mapreduce (experimental)
         href: https://future.mapreduce.futureverse.org
       - text: marshal (experimental)

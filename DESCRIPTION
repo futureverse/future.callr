@@ -23,5 +23,5 @@ License: LGPL (>= 2.1)
 LazyLoad: TRUE
 URL: https://future.callr.futureverse.org, https://github.com/HenrikBengtsson/future.callr
 BugReports: https://github.com/HenrikBengtsson/future.callr/issues
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0
 Roxygen: list(markdown = TRUE)

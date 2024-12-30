@@ -218,8 +218,16 @@ run.CallrFuture <- local({
     globals <- future$globals
     
     ## Make a callr::r_bg()-compatible function
-    expr <- bquote_apply(tmpl_expr)
-    func <- eval(expr, enclos = baseenv())
+    ns <- getNamespace("future")
+    hasEvalFuture <- exists("evalFuture", mode = "function", envir = ns, inherits = FALSE)
+    if (hasEvalFuture) {
+      func <- function(expr) { eval(expr, enclos = baseenv()) }
+      r_bg_args <- list(expr = expr)
+    } else {
+      expr <- bquote_apply(tmpl_expr)
+      func <- eval(expr, enclos = baseenv())
+      r_bg_args <- list(globals = globals)
+    }
   
     ## 1. Wait for an available worker
     waitForWorker(type = "callr", workers = future$workers)
@@ -252,7 +260,7 @@ run.CallrFuture <- local({
     ## Launch
     ## WORKAROUND: callr::r_bg() updates the RNG state
     with_stealth_rng({
-      future$process <- r_bg(func, args = list(globals = globals), stdout = stdout, stderr = stderr, cmdargs = cmdargs, supervise = supervise)
+      future$process <- r_bg(func, args = r_bg_args, stdout = stdout, stderr = stderr, cmdargs = cmdargs, supervise = supervise)
     })
     if (debug) mdebugf("Launched future (PID=%d)", future$process$get_pid())
   

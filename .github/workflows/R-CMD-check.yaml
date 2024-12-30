@@ -22,15 +22,15 @@ jobs:
           - {os: macOS-latest,   r: 'devel'    }
           - {os: macOS-latest,   r: 'release'  }
           - {os: macOS-latest,   r: 'oldrel'   }
-          - {os: ubuntu-22.04,   r: 'devel'    }
-          - {os: ubuntu-22.04,   r: 'release'  }
-          - {os: ubuntu-22.04,   r: 'oldrel'   }
-          - {os: ubuntu-22.04,   r: 'oldrel-1' }
-          - {os: ubuntu-22.04,   r: 'oldrel-2' }
-          - {os: ubuntu-22.04,   r: '3.5'      }
-          - {os: ubuntu-22.04,   r: 'release'  , language: ko,    label: ko    }
-          - {os: ubuntu-22.04,   r: 'release'  , language: zh_CN, label: zh_CN }
-          - {os: ubuntu-22.04,   r: 'release'  , language: zh_TW, label: zh_TW }
+          - {os: ubuntu-latest,  r: 'devel'    }
+          - {os: ubuntu-latest,  r: 'release'  }
+          - {os: ubuntu-latest,  r: 'oldrel'   }
+          - {os: ubuntu-latest,  r: 'oldrel-1' }
+          - {os: ubuntu-latest,  r: 'oldrel-2' }
+          - {os: ubuntu-latest,  r: '4.0'      }
+          - {os: ubuntu-latest,  r: 'release'  , language: ko,    label: ko    }
+          - {os: ubuntu-latest,  r: 'release'  , language: zh_CN, label: zh_CN }
+          - {os: ubuntu-latest,  r: 'release'  , language: zh_TW, label: zh_TW }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
 
       - name: Cache R packages
         if: runner.os != 'Windows'
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
@@ -113,7 +113,7 @@ jobs:
 
       - name: Upload check results
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check

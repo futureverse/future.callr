@@ -25,8 +25,8 @@ demo("mandelbrot", package = "future", ask = FALSE)
 Useful links:
 \itemize{
   \item \url{https://future.callr.futureverse.org}
-  \item \url{https://github.com/HenrikBengtsson/future.callr}
-  \item Report bugs at \url{https://github.com/HenrikBengtsson/future.callr/issues}
+  \item \url{https://github.com/futureverse/future.callr}
+  \item Report bugs at \url{https://github.com/futureverse/future.callr/issues}
 }
 
 }

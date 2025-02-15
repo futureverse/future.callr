@@ -212,7 +212,6 @@ run.CallrFuture <- local({
   
     ## Get future expression
     stdout <- if (isTRUE(future$stdout)) TRUE else NA
-    expr <- getExpression(future, stdout = stdout)
   
     ## Get globals
     globals <- future$globals
@@ -221,9 +220,13 @@ run.CallrFuture <- local({
     ns <- getNamespace("future")
     hasEvalFuture <- exists("evalFuture", mode = "function", envir = ns, inherits = FALSE)
     if (hasEvalFuture) {
-      func <- function(expr) { eval(expr, enclos = baseenv()) }
-      r_bg_args <- list(expr = expr)
+      evalFuture <- import_future("evalFuture")
+      getFutureData <- import_future("getFutureData")
+      func <- function(data) { future:::evalFuture(data) }
+      data <- getFutureData(future)
+      r_bg_args <- list(data)
     } else {
+      expr <- getExpression(future, stdout = stdout)
       expr <- bquote_apply(tmpl_expr)
       func <- eval(expr, enclos = baseenv())
       r_bg_args <- list(globals = globals)

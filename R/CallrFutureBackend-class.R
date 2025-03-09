@@ -20,10 +20,7 @@
 #' @importFrom future Future availableCores
 #' @export
 callr <- function(..., workers = availableCores(), supervise = FALSE, envir = parent.frame()) {
-  if (is.null(workers)) workers <- availableCores()
-  f <- Future(..., workers = workers, supervise = supervise, envir = envir)
-  class(f) <- c("CallrFuture", "MultiprocessFuture", "Future")
-  f
+  stop("INTERNAL ERROR: The future.callr::callr() function implements the FutureBackend and should never be called directly")
 }
 class(callr) <- c("callr", "multiprocess", "future", "function")
 attr(callr, "tweakable") <- "supervise"

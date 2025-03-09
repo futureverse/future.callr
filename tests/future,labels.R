@@ -9,14 +9,6 @@ for (strategy in strategies) {
   plan(strategy)
 
   for (label in list(NULL, sprintf("strategy_%s", strategy))) {
-    fcn <- get(strategy, mode = "function")
-    stopifnot(inherits(fcn, strategy))
-    f <- fcn(42, label = label)
-    print(f)
-    stopifnot(identical(f$label, label))
-    v <- value(f)
-    stopifnot(v == 42)
-
     f <- future(42, label = label)
     print(f)
     stopifnot(identical(f$label, label))

@@ -6,8 +6,8 @@ jobs:
   R-CMD-check:
     if: "! contains(github.event.head_commit.message, '[ci skip]')"    
 
-    timeout-minutes: 15
-    
+    timeout-minutes: 30
+
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }}) ${{ matrix.config.label }}
@@ -19,34 +19,41 @@ jobs:
           - {os: windows-latest, r: 'devel'    }
           - {os: windows-latest, r: 'release'  }
           - {os: windows-latest, r: 'oldrel'   }
-          - {os: macOS-latest,   r: 'devel'    }
+#          - {os: macOS-latest,   r: 'devel'    }
           - {os: macOS-latest,   r: 'release'  }
-          - {os: macOS-latest,   r: 'oldrel'   }
-          - {os: ubuntu-latest,  r: 'devel'    }
+#          - {os: macOS-latest,   r: 'oldrel'   }
+#          - {os: ubuntu-latest,  r: 'devel'    }
           - {os: ubuntu-latest,  r: 'release'  }
           - {os: ubuntu-latest,  r: 'oldrel'   }
           - {os: ubuntu-latest,  r: 'oldrel-1' }
           - {os: ubuntu-latest,  r: 'oldrel-2' }
           - {os: ubuntu-latest,  r: '4.0'      }
+          
+          - {os: ubuntu-latest,  r: 'release'  , availablecores: 1, label: 'availableCores.system=1' }
+          - {os: ubuntu-latest,  r: 'release'  , availablecores: 2, label: 'availableCores.system=2' }
           - {os: ubuntu-latest,  r: 'release'  , language: ko,    label: ko    }
           - {os: ubuntu-latest,  r: 'release'  , language: zh_CN, label: zh_CN }
           - {os: ubuntu-latest,  r: 'release'  , language: zh_TW, label: zh_TW }
-
+ 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      RSPM: https://packagemanager.rstudio.com/cran/__linux__/jammy/latest
+      R_KEEP_PKG_SOURCE: yes
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      ## Test in other locale (optional)
+      LANGUAGE: ${{ matrix.config.language }}
+      ## R (>= 4.4.0) Note, no trailing underscore (sic!)
+      _R_COMPARE_LANG_OBJECTS: eqonly
       ## R CMD check
       _R_CHECK_CRAN_INCOMING_: false
-      _R_CHECK_LENGTH_1_CONDITION_: true
-      _R_CHECK_LENGTH_1_LOGIC2_: true
       _R_CHECK_MATRIX_DATA_: true
       _R_CHECK_SUGGESTS_ONLY_: true
       _R_CHECK_THINGS_IN_TEMP_DIR_: true
+      _R_CHECK_TESTS_NLINES_: 300
       RCMDCHECK_ERROR_ON: note
-      ## Test in other locale (optional)
-      LANGUAGE: ${{ matrix.config.language }}
-
+      ## Specific to futures
+      R_PARALLELLY_AVAILABLECORES_SYSTEM: ${{ matrix.config.availablecores }}
+      R_FUTURE_RNG_ONMISUSE: error
+      
     steps:
       - uses: actions/checkout@v4
 
@@ -55,58 +62,59 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
-
-      - name: Query R package dependencies
-        run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-
-      - name: Cache R packages
-        if: runner.os != 'Windows'
-        uses: actions/cache@v4
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+          
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+          extra-packages: |
+            any::rcmdcheck
+            any::remotes
+          needs: check
 
-      - name: Install R package system dependencies (Linux)
-        if: runner.os == 'Linux'
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+      - name: Install package itself (special case)
         run: |
-          Rscript -e "remotes::install_github('r-hub/sysreqs')"
-          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
-          sudo -s eval "$sysreqs"
-          sudo apt install -y libcurl4-openssl-dev
-
-      - name: Install R package dependencies
-        run: |
-          remotes::install_deps(dependencies = TRUE)
-          install.packages(".", repos = NULL, type = "source")  ## self vignette engine
-        shell: Rscript {0}
-
-      - name: Install 'rcmdcheck'
-        run: |
-          remotes::install_cran("rcmdcheck")
-          library(rcmdcheck)  ## triggers an error, if installation failed
+          if (packageVersion("future") <= "1.34.0") {
+            remotes::install_github("futureverse/future", ref = "feature/FutureBackend")
+          }
+          install.packages(".", repos = NULL, type = "source")  ## needed by parallel workers
         shell: Rscript {0}
 
       - name: Session info
         run: |
           options(width = 100)
+          parallelly::availableCores(which = "all")
+          sapply(c(physical_cores = FALSE, logical_cores = TRUE), parallel::detectCores)
+          if (require(RhpcBLASctl, quietly=TRUE)) c(get_num_procs = get_num_procs(), get_num_cores = get_num_cores(), blas_get_num_procs = blas_get_num_procs(), omp_get_num_procs = omp_get_num_procs(), omp_get_max_threads = omp_get_max_threads())
           capabilities()
           pkgs <- installed.packages()[, "Package"]
           sessioninfo::session_info(pkgs, include_base = TRUE)
+          ## Verify LANGUAGE settings by generating a translatable error
+          cat(sprintf("LANGUAGE=%s\n", sQuote(Sys.getenv("LANGUAGE"))))
+          cat(sprintf("locales: %s\n", sQuote(Sys.getlocale())))
+          tryCatch(log("a"), error = conditionMessage)
         shell: Rscript {0}
 
       - name: Check
+        if: runner.os != 'Windows'
+        env:
+          ## FIXME: Eventually update to 'R_FUTURE_GLOBALS_ONREFERENCE=error'
+          R_FUTURE_GLOBALS_ONREFERENCE: "warning"
+          R_FUTURE_PLAN: ${{ matrix.config.plan }}
         run: |
           if (nzchar(Sys.getenv("R_FUTURE_PLAN")) || getRversion() < "3.5.0") Sys.setenv(RCMDCHECK_ERROR_ON = "error")
           rcmdcheck::rcmdcheck(
             build_args = if (getRversion() < "3.5.0") "--no-build-vignettes",
-            args = c("--no-manual", "--as-cran", if (.Platform$OS.type == "windows" && getRversion() >= "4.2.0") "--no-multiarch", if (getRversion() < "3.5.0") c("--no-vignettes", "--no-build-vignettes", "--ignore-vignettes")),
+            args = c("--no-manual", "--as-cran", if (getRversion() < "3.5.0") c("--no-vignettes", "--no-build-vignettes", "--ignore-vignettes")),
+            check_dir = "check"
+          )
+        shell: Rscript {0}
+ 
+      - name: Check (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          rcmdcheck::rcmdcheck(
+            args = c("--no-manual", "--as-cran", if (.Platform$OS.type == "windows" && getRversion() >= "4.2.0") "--no-multiarch"),
             check_dir = "check"
           )
         shell: Rscript {0}

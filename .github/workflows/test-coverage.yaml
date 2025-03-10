@@ -35,7 +35,7 @@ jobs:
       - name: Install package itself (special case)
         run: |
           if (packageVersion("future") <= "1.34.0") {
-            remotes::install_github("futureverse/future", ref = "feature/FutureBackend")
+            remotes::install_github("futureverse/future", ref = "develop")
           }
           install.packages(".", repos = NULL, type = "source")
         shell: Rscript {0}

@@ -17,7 +17,8 @@
 #' callr futures rely on the \pkg{callr} package, which is supported
 #' on all operating systems.
 #'
-#' @importFrom future Future availableCores
+#' @importFrom parallelly availableCores
+#' @importFrom future Future
 #' @export
 callr <- function(..., workers = availableCores(), supervise = FALSE, envir = parent.frame()) {
   stop("INTERNAL ERROR: The future.callr::callr() function implements the FutureBackend and should never be called directly")

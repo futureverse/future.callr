@@ -4,6 +4,7 @@ Depends:
     R (>= 3.4.0),
     future (>= 1.34.0)
 Imports:
+    parallelly,
     callr
 Suggests:
     globals,

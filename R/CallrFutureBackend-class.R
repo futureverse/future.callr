@@ -83,11 +83,11 @@ launchFuture.CallrFutureBackend <- local({
   function(backend, future, ...) {
     ## Memoization
     if (identical(cmdargs, NULL)) {
-      cmdargs <- eval(formals(r_bg)$cmdargs)
+      cmdargs <- eval(formals(r_bg)[["cmdargs"]])
     }
 
-    if (future$state != "created") {
-      label <- future$label
+    if (future[["state"]] != "created") {
+      label <- future[["label"]]
       if (is.null(label)) label <- "<none>"
       msg <- sprintf("A future ('%s') can only be launched once.", label)
       stop(FutureError(msg, future = future))
@@ -102,10 +102,10 @@ launchFuture.CallrFutureBackend <- local({
     debug <- getOption("future.debug", FALSE)
   
     ## Get future expression
-    stdout <- if (isTRUE(future$stdout)) TRUE else NA
+    stdout <- if (isTRUE(future[["stdout"]])) TRUE else NA
   
     ## Get globals
-    globals <- future$globals
+    globals <- future[["globals"]]
     
     ## Make a callr::r_bg()-compatible function
     func <- function(data) { future:::evalFuture(data) }
@@ -140,23 +140,23 @@ launchFuture.CallrFutureBackend <- local({
     stderr <- NULL
 
     ## Add future label to process call?
-    if (!is.null(future$label)) {
+    if (!is.null(future[["label"]])) {
       ## Ideally this comes after a '--args' argument to R, but that is
       ## not possible with the current r_bg() because it will *append*
       ## '-f a-file.R' after these. /HB 2018-11-10
-      cmdargs <- c(cmdargs, sprintf("--future-label=%s", shQuote(future$label)))
+      cmdargs <- c(cmdargs, sprintf("--future-label=%s", shQuote(future[["label"]])))
     }
 
 
     ## Launch
     ## WORKAROUND: callr::r_bg() updates the RNG state
     with_stealth_rng({
-      future$process <- r_bg(func, args = r_bg_args, stdout = stdout, stderr = stderr, cmdargs = cmdargs, supervise = supervise)
+      future[["process"]] <- r_bg(func, args = r_bg_args, stdout = stdout, stderr = stderr, cmdargs = cmdargs, supervise = supervise)
     })
-    if (debug) mdebugf("Launched future (PID=%d)", future$process$get_pid())
+    if (debug) mdebugf("Launched future (PID=%d)", future[["process"]]$get_pid())
   
     ## 3. Running
-    future$state <- "running"
+    future[["state"]] <- "running"
   
     invisible(future)
   } ## run()
@@ -200,7 +200,7 @@ print.CallrFuture <- function(x, ...) {
   NextMethod()
 
   ## Ask for the callr status
-  process <- x$process
+  process <- x[["process"]]
   if (inherits(process, "r_process")) {
     status <- if (process$is_alive()) "running" else "finished"
   } else {
@@ -235,7 +235,7 @@ resolved.CallrFuture <- function(x, .signalEarly = TRUE, ...) {
   resolved <- NextMethod()
   if (resolved) return(TRUE)
   
-  process <- x$process
+  process <- x[["process"]]
   if (!inherits(process, "r_process")) return(FALSE)
   resolved <- !process$is_alive()
 
@@ -251,13 +251,13 @@ resolved.CallrFuture <- function(x, .signalEarly = TRUE, ...) {
 #' @keywords internal
 #' @export
 result.CallrFuture <- function(future, ...) {
-  result <- future$result
+  result <- future[["result"]]
   if (!is.null(result)) {
     if (inherits(result, "FutureError")) stop(result)
     return(result)
   }
   
-  if (future$state == "created") {
+  if (future[["state"]] == "created") {
     future <- run(future)
   }
 
@@ -265,12 +265,12 @@ result.CallrFuture <- function(future, ...) {
 
   if (!inherits(result, "FutureResult")) {
     ex <- UnexpectedFutureResultError(future)
-    future$result <- ex
+    future[["result"]] <- ex
     stop(ex)
   }
 
-  future$result <- result
-  future$state <- "finished"
+  future[["result"]] <- result
+  future[["state"]] <- "finished"
   
   result
 }
@@ -289,8 +289,8 @@ await <- function(future, ...) {
   
   debug <- getOption("future.debug", FALSE)
 
-  expr <- future$expr
-  process <- future$process
+  expr <- future[["expr"]]
+  process <- future[["process"]]
 
   if (debug) mdebug("callr::wait() ...")
 
@@ -316,7 +316,7 @@ await <- function(future, ...) {
 
   if (process$is_alive()) {
     if (debug) mdebug("- callr process: running")
-    label <- future$label
+    label <- future[["label"]]
     if (is.null(label)) label <- "<none>"
     msg <- sprintf("AsyncNotReadyError: Polled for results for %s seconds every %g seconds, but asynchronous evaluation for %s future (%s) is still running: %s", timeout, delta, class(future)[1], sQuote(label), process$get_pid()) #nolint
     if (debug) mdebug(msg)
@@ -351,7 +351,7 @@ await <- function(future, ...) {
   if (inherits(result, "error")) {
     if (future[["state"]] == "interrupted") {
       if (debug) mdebugf("- Detected interrupted %s whose result cannot be retrieved", sQuote(class(future)[1]))
-      label <- future$label
+      label <- future[["label"]]
       if (is.null(label)) label <- "<none>"
       process <- future[["process"]]
       pid <- process$get_pid()
@@ -383,7 +383,7 @@ await <- function(future, ...) {
   }
 
   ## Retrieve any logged standard output and standard error
-  process <- future$process
+  process <- future[["process"]]
 
   ## PROTOTYPE RESULTS BELOW:
   prototype_fields <- NULL
@@ -393,13 +393,13 @@ await <- function(future, ...) {
   ## capture stderr reliably in R, cf.
   ## https://github.com/HenrikBengtsson/Wishlist-for-R/issues/55
   ## /2021-04-05
-  if (is.null(result$stderr) && FALSE) {
+  if (is.null(result[["stderr"]]) && FALSE) {
     prototype_fields <- c(prototype_fields, "stderr")
-    result$stderr <- tryCatch({
+    result[["stderr"]] <- tryCatch({
       res <- process$read_all_error()
       res
     }, error = function(ex) {
-      label <- future$label
+      label <- future[["label"]]
       if (is.null(label)) label <- "<none>"
       warning(FutureWarning(sprintf("Failed to retrieve standard error from %s (%s). The reason was: %s", class(future)[1], sQuote(label), conditionMessage(ex)), future = future))
       NULL
@@ -407,7 +407,7 @@ await <- function(future, ...) {
   }
 
   if (length(prototype_fields) > 0) {
-    result$PROTOTYPE_WARNING <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), max_head = Inf, collapse = ", ", last_collapse  = " and "))
+    result[["PROTOTYPE_WARNING"]] <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), max_head = Inf, collapse = ", ", last_collapse  = " and "))
   }
 
   FutureRegistry("workers-callr", action = "remove", future = future)
@@ -427,14 +427,14 @@ post_mortem_failure <- function(reason, future) {
   if (inherits(reason, "error")) reason <- conditionMessage(reason)
 
   ## (2) Information on the future
-  label <- future$label
+  label <- future[["label"]]
   if (is.null(label)) label <- "<none>"
   stop_if_not(length(label) == 1L)
 
   ## (3) POST-MORTEM ANALYSIS:
   postmortem <- list()
                  
-  process <- future$process
+  process <- future[["process"]]
   pid <- tryCatch(process$get_pid(), error = function(e) NA_integer_)
   start_time <- tryCatch(format(process$get_start_time(), format = "%Y-%m-%dT%H:%M:%S%z"), error = function(e) NA_character_)
   msg2 <- sprintf("The parallel worker (PID %.0f) started at %s", pid, start_time)

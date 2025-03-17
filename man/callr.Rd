@@ -4,21 +4,13 @@
 \alias{callr}
 \title{callr futures}
 \usage{
-callr(
-  ...,
-  workers = availableCores(),
-  supervise = FALSE,
-  envir = parent.frame()
-)
+callr(..., workers = availableCores(), supervise = FALSE)
 }
 \arguments{
 \item{workers}{The number of processes to be available for concurrent
 callr futures.}
 
 \item{supervise}{(optional) Argument passed to \code{\link[callr:r_bg]{callr::r_bg()}}.}
-
-\item{envir}{The \link{environment} from where global objects should be
-identified.}
 
 \item{\ldots}{Additional arguments passed to \code{Future()}.}
 }

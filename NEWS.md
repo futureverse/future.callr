@@ -1,6 +1,8 @@
 # Version (development version)
 
- * ...
+## New Features
+
+ * Now 'callr' futures can be interrupted using `interrupt()`.
 
 
 # Version 0.8.2 [2023-08-08]

@@ -20,7 +20,7 @@
 #' @importFrom parallelly availableCores
 #' @importFrom future Future
 #' @export
-callr <- function(..., workers = availableCores(), supervise = FALSE, envir = parent.frame()) {
+callr <- function(..., workers = availableCores(), supervise = FALSE) {
   stop("INTERNAL ERROR: The future.callr::callr() function implements the FutureBackend and should never be called directly")
 }
 class(callr) <- c("callr", "multiprocess", "future", "function")
@@ -199,17 +199,15 @@ nbrOfFreeWorkers.CallrFutureBackend <- function(evaluator = NULL, background = F
 print.CallrFuture <- function(x, ...) {
   NextMethod()
 
-  ## Ask for status once
+  ## Ask for the callr status
   process <- x$process
   if (inherits(process, "r_process")) {
     status <- if (process$is_alive()) "running" else "finished"
-    x$state <- status
   } else {
     status <- NA_character_
   }
   printf("callr status: %s\n", paste(sQuote(status), collapse = ", "))
 
-  process <- x$process
   if (is_na(status)) {
     printf("callr %s: Not found (happens when finished and deleted)\n",
            class(process)[1])
@@ -279,7 +277,7 @@ result.CallrFuture <- function(future, ...) {
 
 
 #' @importFrom utils tail
-#' @importFrom future FutureError FutureWarning
+#' @importFrom future FutureError FutureWarning FutureInterruptError
 await <- function(future, ...) {
   backend <- future[["backend"]]
   timeout <- backend[["future.wait.timeout"]]
@@ -351,6 +349,18 @@ await <- function(future, ...) {
   
   ## Failed?
   if (inherits(result, "error")) {
+    if (future[["state"]] == "interrupted") {
+      if (debug) mdebugf("- Detected interrupted %s whose result cannot be retrieved", sQuote(class(future)[1]))
+      label <- future$label
+      if (is.null(label)) label <- "<none>"
+      process <- future[["process"]]
+      pid <- process$get_pid()
+      msg <- sprintf("A future ('%s') of class %s was interrupted, while running on localhost (pid %d)", label, class(future)[1], pid)
+      result <- FutureInterruptError(msg, future = future)
+      future[["result"]] <- result
+      stop(result)
+    }
+    
     msg <- post_mortem_failure(result, future = future)
     ex <- CallrFutureError(msg, future = future)
 
@@ -456,3 +466,15 @@ post_mortem_failure <- function(reason, future) {
 
   msg
 } # post_mortem_failure()
+
+
+#' @importFrom future interruptFuture
+#' @importFrom parallelly killNode
+#' @export
+interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
+  process <- future[["process"]]
+  pid <- process$get_pid()
+  res <- tools::pskill(pid)
+  future[["state"]] <- "interrupted"
+  future
+}

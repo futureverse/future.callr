@@ -97,7 +97,7 @@ launchFuture.CallrFutureBackend <- local({
 
     waitForWorker(type = "callr", workers = workers)
 
-    ## 2. Allocate future now worker
+    ## 2. Allocate future to worker
     reg <- backend[["reg"]]
     FutureRegistry(reg, action = "add", future = future, earlySignal = FALSE)
   

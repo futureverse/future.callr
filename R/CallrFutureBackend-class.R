@@ -1,33 +1,3 @@
-#' callr futures
-#'
-#' A callr future is an asynchronous multiprocess
-#' future that will be evaluated in a background R session.
-#'
-#' @inheritParams future::Future
-#' @inheritParams CallrFutureBackend
-#' 
-#' @param workers The number of processes to be available for concurrent
-#' callr futures.
-#' 
-#' @param \ldots Additional arguments passed to `Future()`.
-#'
-#' @return An object of class `CallrFuture`.
-#'
-#' @details
-#' callr futures rely on the \pkg{callr} package, which is supported
-#' on all operating systems.
-#'
-#' @importFrom parallelly availableCores
-#' @importFrom future Future
-#' @export
-callr <- function(..., workers = availableCores(), supervise = FALSE) {
-  stop("INTERNAL ERROR: The future.callr::callr() function implements the FutureBackend and should never be called directly")
-}
-class(callr) <- c("callr", "multiprocess", "future", "function")
-attr(callr, "tweakable") <- "supervise"
-
-
-
 #' A callr future is a future whose value will be resolved via callr
 #'
 #' @param workers (optional) The maximum number of workers the callr
@@ -55,6 +25,7 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
   stop_if_not(length(supervise) == 1L, is.logical(supervise), !is.na(supervise))
 
   core <- FutureBackend(
+    reg = "workers-callr",
     workers = workers,
     supervise = supervise,
     future.wait.timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
@@ -68,7 +39,7 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
 }
 
 
-#' @importFrom future run getExpression FutureError
+#' @importFrom future run FutureError
 #' @importFrom callr r_bg
 #' @keywords internal
 #' @importFrom future launchFuture
@@ -77,6 +48,7 @@ launchFuture.CallrFutureBackend <- local({
   ## MEMOIZATION
   evalFuture <- import_future("evalFuture")
   getFutureData <- import_future("getFutureData")
+  with_stealth_rng <- import_future("with_stealth_rng")
   
   cmdargs <- NULL
 
@@ -126,7 +98,8 @@ launchFuture.CallrFutureBackend <- local({
     waitForWorker(type = "callr", workers = workers)
 
     ## 2. Allocate future now worker
-    FutureRegistry("workers-callr", action = "add", future = future, earlySignal = FALSE)
+    reg <- backend[["reg"]]
+    FutureRegistry(reg, action = "add", future = future, earlySignal = FALSE)
   
     ## Discard standard output? (as soon as possible)
     stdout <- if (isTRUE(stdout)) "|" else NULL
@@ -163,6 +136,31 @@ launchFuture.CallrFutureBackend <- local({
 })
 
 
+#' @importFrom future stopWorkers interrupt
+#' @export
+stopWorkers.CallrFutureBackend <- function(backend, ...) {
+  reg <- backend[["reg"]]
+  futures <- FutureRegistry(reg, action = "list", earlySignal = FALSE)
+  
+  ## Nothing to do?
+  if (length(futures) == 0L) return(backend)
+
+  ## Enable interrupts temporarily, if disabled
+  if (!isTRUE(backend[["interrupts"]])) {
+    backend[["interrupts"]] <- TRUE
+    on.exit(backend[["interrupts"]] <- FALSE)
+  }
+
+  ## Interrupt all futures, which terminates the workers
+  futures <- lapply(futures, FUN = interrupt)
+
+  ## Erase registry
+  futures <- FutureRegistry(reg, action = "reset")
+
+  backend
+}
+
+
 
 #' @importFrom future nbrOfWorkers
 #' @export
@@ -179,7 +177,8 @@ nbrOfWorkers.CallrFutureBackend <- function(evaluator) {
 nbrOfFreeWorkers.CallrFutureBackend <- function(evaluator = NULL, background = FALSE, ...) {
   backend <- evaluator
   workers <- backend[["workers"]]
-  usedWorkers <- length(FutureRegistry("workers-callr", action = "list",
+  reg <- backend[["reg"]]
+  usedWorkers <- length(FutureRegistry(reg, action = "list",
                         earlySignal = FALSE))
   workers <- workers - usedWorkers
   stop_if_not(length(workers) == 1L, !is.na(workers), workers >= 
@@ -217,11 +216,6 @@ print.CallrFuture <- function(x, ...) {
   }
 
   invisible(x)
-}
-
-#' @export
-getExpression.CallrFuture <- function(future, mc.cores = 1L, ...) {
-  NextMethod(mc.cores = mc.cores)
 }
 
 
@@ -264,9 +258,12 @@ result.CallrFuture <- function(future, ...) {
   result <- await(future, cleanup = FALSE)
 
   if (!inherits(result, "FutureResult")) {
-    ex <- UnexpectedFutureResultError(future)
-    future[["result"]] <- ex
-    stop(ex)
+    if (inherits(result, "FutureLaunchError")) {
+    } else {
+      ex <- UnexpectedFutureResultError(future)
+      future[["result"]] <- ex
+      stop(ex)
+    }
   }
 
   future[["result"]] <- result
@@ -360,13 +357,18 @@ await <- function(future, ...) {
       future[["result"]] <- result
       stop(result)
     }
-    
+
+    if (inherits(result, "FutureLaunchError")) {
+      future[["result"]] <- result
+      stop(result)
+    }
+
     msg <- post_mortem_failure(result, future = future)
     ex <- CallrFutureError(msg, future = future)
 
     ## Remove future from FutureRegistry?
     if (!process$is_alive()) {
-      reg <- "workers-callr"
+      reg <- backend[["reg"]]
       if (FutureRegistry(reg, action = "contains", future = future)) {
         FutureRegistry(reg, action = "remove", future = future)
       }
@@ -410,7 +412,8 @@ await <- function(future, ...) {
     result[["PROTOTYPE_WARNING"]] <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), max_head = Inf, collapse = ", ", last_collapse  = " and "))
   }
 
-  FutureRegistry("workers-callr", action = "remove", future = future)
+  reg <- backend[["reg"]]
+  FutureRegistry(reg, action = "remove", future = future)
   
   result
 } # await()
@@ -472,9 +475,41 @@ post_mortem_failure <- function(reason, future) {
 #' @importFrom parallelly killNode
 #' @export
 interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
+  ## Has interrupts been disabled by user?
+  if (!backend[["interrupts"]]) return(future)
   process <- future[["process"]]
   pid <- process$get_pid()
   res <- tools::pskill(pid)
   future[["state"]] <- "interrupted"
   future
 }
+
+
+#' callr futures
+#'
+#' A callr future is an asynchronous multiprocess
+#' future that will be evaluated in a background R session.
+#'
+#' @inheritParams future::Future
+#' @inheritParams CallrFutureBackend
+#' 
+#' @param workers The number of processes to be available for concurrent
+#' callr futures.
+#' 
+#' @param \ldots Additional arguments passed to `Future()`.
+#'
+#' @return An object of class `CallrFuture`.
+#'
+#' @details
+#' callr futures rely on the \pkg{callr} package, which is supported
+#' on all operating systems.
+#'
+#' @importFrom parallelly availableCores
+#' @importFrom future Future
+#' @export
+callr <- function(..., workers = availableCores(), supervise = FALSE) {
+  stop("INTERNAL ERROR: The future.callr::callr() function implements the FutureBackend and should never be called directly")
+}
+class(callr) <- c("callr", "multiprocess", "future", "function")
+attr(callr, "tweakable") <- "supervise"
+attr(callr, "factory") <- CallrFutureBackend

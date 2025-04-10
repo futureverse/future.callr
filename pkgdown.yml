@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   future.callr: future.callr.html
-last_built: 2025-03-29T17:56Z
+last_built: 2025-04-10T21:15Z
 urls:
   reference: https://future.callr.futureverse.org/reference
   article: https://future.callr.futureverse.org/articles

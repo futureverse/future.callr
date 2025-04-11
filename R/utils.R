@@ -125,8 +125,8 @@ hexpr <- function(expr, trim = TRUE, collapse = "; ", maxHead = 6L, maxTail = 3L
 ## Tests if the current OS is of a certain type
 is_os <- function(name) {
   if (name == "windows") {
-    return(.Platform$OS.type == "windows")
+    return(.Platform[["OS.type"]] == "windows")
   } else {
-    grepl(paste0("^", name), R.version$os)
+    grepl(paste0("^", name), R.version[["os"]])
   }
 }

@@ -1,10 +1,11 @@
 Package: future.callr
-Version: 0.8.2-9004
+Version: 0.8.2-9206
 Depends:
     R (>= 3.4.0),
-    future (>= 1.33.0)
+    future (>= 1.40.0)
 Imports:
-    callr (>= 2.0.3)
+    parallelly,
+    callr
 Suggests:
     globals,
     future.apply,
@@ -23,5 +24,6 @@ License: LGPL (>= 2.1)
 LazyLoad: TRUE
 URL: https://future.callr.futureverse.org, https://github.com/futureverse/future.callr
 BugReports: https://github.com/futureverse/future.callr/issues
+Encoding: UTF-8
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

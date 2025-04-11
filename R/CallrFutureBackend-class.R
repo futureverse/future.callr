@@ -346,34 +346,47 @@ await <- function(future, ...) {
   
   ## Failed?
   if (inherits(result, "error")) {
-    if (future[["state"]] == "interrupted") {
-      if (debug) mdebugf("- Detected interrupted %s whose result cannot be retrieved", sQuote(class(future)[1]))
-      label <- future[["label"]]
-      if (is.null(label)) label <- "<none>"
-      process <- future[["process"]]
-      pid <- process$get_pid()
-      msg <- sprintf("A future ('%s') of class %s was interrupted, while running on localhost (pid %d)", label, class(future)[1], pid)
-      result <- FutureInterruptError(msg, future = future)
-      future[["result"]] <- result
-      stop(result)
-    }
-
-    if (inherits(result, "FutureLaunchError")) {
-      future[["result"]] <- result
-      stop(result)
-    }
-
-    msg <- post_mortem_failure(result, future = future)
-    ex <- CallrFutureError(msg, future = future)
-
+    label <- future[["label"]]
+    if (is.null(label)) label <- "<none>"
+    pid <- process$get_pid()
+    exit_code <- tryCatch(process$get_exit_status(), error = function(e) NA_integer_)
+    alive <- process$is_alive()
+    
     ## Remove future from FutureRegistry?
-    if (!process$is_alive()) {
+    if (!alive) {
       reg <- backend[["reg"]]
       if (FutureRegistry(reg, action = "contains", future = future)) {
         FutureRegistry(reg, action = "remove", future = future)
       }
     }
-    
+
+    ## Failed to launch?
+    if (inherits(result, "FutureLaunchError")) {
+      future[["result"]] <- result
+      stop(result)
+    }
+
+    ## Was the future explicitly interrupted?
+    if (future[["state"]] == "interrupted") {
+      if (debug) mdebugf("- Detected interrupted %s whose result cannot be retrieved", sQuote(class(future)[1]))
+      msg <- sprintf("A future ('%s') of class %s was interrupted (exit code %d), while running on localhost (pid %d)", label, class(future)[1], exit_code, pid)
+      result <- FutureInterruptError(msg, future = future)
+      future[["result"]] <- result
+      stop(result)
+    }
+
+    ## Was the future implicitly interrupted?
+    if (!alive) {
+      msg <- sprintf("A future ('%s') of class %s was interrupted for unknown reasons (exit code %s), while running on localhost (pid %d)", label, class(future)[1], exit_code, pid)
+      result <- FutureInterruptError(msg, future = future)
+      future[["state"]] <- "interrupted"
+      future[["result"]] <- result
+      stop(result)
+    }
+
+    ## Other, unknown reason for callr failure
+    msg <- post_mortem_failure(result, future = future)
+    ex <- CallrFutureError(msg, future = future)
     stop(ex)
   }
   

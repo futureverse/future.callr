@@ -3,6 +3,11 @@
 ## New Features
 
  * Now 'callr' futures can be interrupted using `interrupt()`.
+   An interrupted future can be `reset()` and relaunched.
+
+ * A future that failed due to the 'callr' worker process was
+   terminated is now considerred interrupted, which for instance
+   means that it can be `reset()`.
 
 
 # Version 0.8.2 [2023-08-08]

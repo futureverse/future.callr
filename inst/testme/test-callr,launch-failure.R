@@ -28,13 +28,13 @@ repeat {
 }
 print(res)
 stopifnot(inherits(res, "error"), inherits(res, "FutureError"),
-          inherits(res, "CallrFutureError"))
+          inherits(res, c("FutureInterruptError", "CallrFutureError")))
 
 message("  - Getting results")
 res <- tryCatch(result(f), error = identity)
 print(res)
 stopifnot(inherits(res, "error"), inherits(res, "FutureError"),
-          inherits(res, "CallrFutureError"))
+          inherits(res, c("FutureInterruptError", "CallrFutureError")))
 
 file.remove(tf)
 

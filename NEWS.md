@@ -9,9 +9,8 @@
    terminated is now considerred interrupted, which for instance
    means that it can be `reset()`.
 
- * Now 'callr' futures can relay `immediateCondition`:s in near
-   real-time, e.g. `progression` contdions signals by the
-   **progressr** package.
+ * Now 'callr' futures relay `immediateCondition`:s in near real-time,
+   e.g. `progression` contdions signals by the **progressr** package.
  
 
 # Version 0.8.2 [2023-08-08]

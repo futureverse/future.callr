@@ -12,5 +12,6 @@ getFutureBackendConfigs <- NULL
   readImmediateConditions <<- import_future("readImmediateConditions")
   signalEarly <<- import_future("signalEarly")
   getFutureBackendConfigs <<- import_future("getFutureBackendConfigs")
+  registerS3method("getFutureBackendConfigs", "CallrFutureBackend", getFutureBackendConfigs.CallrFutureBackend)
 }
 

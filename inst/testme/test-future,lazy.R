@@ -5,7 +5,7 @@ message("*** Futures - lazy ...")
 strategies <- c("callr")
 
 for (strategy in strategies) {
-  mprintf("- plan('%s') ...", strategy)
+  mdebugf("- plan('%s') ...", strategy)
   plan(strategy)
 
   a <- 42
@@ -19,7 +19,7 @@ for (strategy in strategies) {
   a <- 21
   stopifnot(v == 84)
 
-  mprintf("- plan('%s') ... DONE", strategy)
+  mdebugf("- plan('%s') ... DONE", strategy)
 } ## for (strategy ...)
 
 message("*** Futures - lazy ... DONE")

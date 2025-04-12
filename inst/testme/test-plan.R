@@ -11,7 +11,7 @@ library("future.callr")
 plan(callr)
 
 for (type in c("callr")) {
-  mprintf("*** plan('%s') ...", type)
+  mdebugf("*** plan('%s') ...", type)
 
   plan(type)
   stopifnot(inherits(plan("next"), "callr"))
@@ -27,7 +27,7 @@ for (type in c("callr")) {
   print(v)
   stopifnot(v == 0)
 
-  mprintf("*** plan('%s') ... DONE", type)
+  mdebugf("*** plan('%s') ... DONE", type)
 } # for (type ...)
 
 

@@ -5,7 +5,7 @@ message("*** Futures - labels ...")
 strategies <- c("callr")
 
 for (strategy in strategies) {
-  mprintf("- plan('%s') ...", strategy)
+  mdebugf("- plan('%s') ...", strategy)
   plan(strategy)
 
   for (label in list(NULL, sprintf("strategy_%s", strategy))) {
@@ -23,7 +23,7 @@ for (strategy in strategies) {
 
   } ## for (label ...)
 
-  mprintf("- plan('%s') ... DONE", strategy)
+  mdebugf("- plan('%s') ... DONE", strategy)
 } ## for (strategy ...)
 
 message("*** Futures - labels ... DONE")

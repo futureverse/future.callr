@@ -51,10 +51,9 @@ printf("y = %s.\n", paste(y, collapse = ", "))
 printf("x = %s.\n", hpaste(x, last_collapse = " and "))
 ## x = 1, 2, 3, 4, 5 and 6.
 
-message("- mcat(), mprintf(), mprint() and mstr() ...")
-mcat("Hello world!\n")
-mprintf("Hello %s!\n", "world")
-mprint("Hello world!")
+message("- mdebug(), mdebugf() and mstr() ...")
+mdebug("Hello world!")
+mdebugf("Hello %s!", "world")
 mstr("Hello world!")
 
 message("- trim() ...")
@@ -68,7 +67,7 @@ stopifnot(trim(" hello ") == "hello")
 message("- is_os() ...")
 for (os in c("darwin", "freebsd", "irix", "linux", "openbsd",
              "solaris", "windows")) {
-  mprintf("is_os('%s') = %s", os, is_os(os))
+  mdebugf("is_os('%s') = %s", os, is_os(os))
 }
 
 

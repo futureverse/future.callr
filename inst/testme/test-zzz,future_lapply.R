@@ -17,7 +17,7 @@ if (requireNamespace("future.apply", quietly = TRUE)) {
   str(list(y0 = y0))
   
   for (strategy in strategies) {
-    mprintf("- plan('%s') ...", strategy)
+    mdebugf("- plan('%s') ...", strategy)
     plan(strategy)
     stopifnot(nbrOfWorkers() < Inf)
     
@@ -39,7 +39,7 @@ if (requireNamespace("future.apply", quietly = TRUE)) {
   str(list(y0 = y0))
   
   for (strategy in strategies) {
-    mprintf("- plan('%s') ...", strategy)
+    mdebugf("- plan('%s') ...", strategy)
     plan(strategy)
     stopifnot(nbrOfWorkers() < Inf)
   
@@ -60,7 +60,7 @@ if (requireNamespace("future.apply", quietly = TRUE)) {
   str(list(y0 = y0))
   
   for (strategy in strategies) {
-    mprintf("- plan('%s') ...", strategy)
+    mdebugf("- plan('%s') ...", strategy)
     plan(strategy)
     stopifnot(nbrOfWorkers() < Inf)
   
@@ -92,7 +92,7 @@ if (requireNamespace("future.apply", quietly = TRUE)) {
   str(list(y0 = y0))
   
   for (strategy in strategies) {
-    mprintf("- plan('%s') ...", strategy)
+    mdebugf("- plan('%s') ...", strategy)
     plan(strategy)
     stopifnot(nbrOfWorkers() < Inf)
   

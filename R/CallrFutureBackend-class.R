@@ -53,6 +53,12 @@ launchFuture.CallrFutureBackend <- local({
   cmdargs <- NULL
 
   function(backend, future, ...) {
+    debug <- isTRUE(getOption("future.debug"))
+    if (debug) {
+      mdebugf_push("launchFuture() for %s ...", class(backend)[1])
+      mdebugf_pop("launchFuture() for %s ... done", class(backend)[1])
+    }
+  
     ## Memoization
     if (identical(cmdargs, NULL)) {
       cmdargs <- eval(formals(r_bg)[["cmdargs"]])
@@ -71,7 +77,6 @@ launchFuture.CallrFutureBackend <- local({
   
     ## Temporarily disable callr output?
     ## (i.e. messages and progress bars)
-    debug <- getOption("future.debug", FALSE)
   
     ## Get future expression
     stdout <- if (isTRUE(future[["stdout"]])) TRUE else NA
@@ -95,7 +100,7 @@ launchFuture.CallrFutureBackend <- local({
     delta   = backend[["future.wait.interval"]]
     alpha   = backend[["future.wait.alpha"]]
 
-    waitForWorker(type = "callr", workers = workers)
+    waitForWorker(type = "callr", workers = workers, debug = debug)
 
     ## 2. Allocate future to worker
     reg <- backend[["reg"]]
@@ -139,6 +144,12 @@ launchFuture.CallrFutureBackend <- local({
 #' @importFrom future stopWorkers interrupt
 #' @export
 stopWorkers.CallrFutureBackend <- function(backend, ...) {
+  debug <- isTRUE(getOption("future.debug"))
+  if (debug) {
+    mdebugf_push("stopWorkers() for %s ...", class(backend)[1])
+    mdebugf_pop("stopWorkers() for %s ... done", class(backend)[1])
+  }
+  
   reg <- backend[["reg"]]
   futures <- FutureRegistry(reg, action = "list", earlySignal = FALSE)
   
@@ -254,6 +265,12 @@ print.CallrFuture <- function(x, ...) {
 #' @keywords internal
 #' @export
 resolved.CallrFuture <- function(x, .signalEarly = TRUE, ...) {
+  debug <- isTRUE(getOption("future.debug"))
+  if (debug) {
+    mdebugf_push("resolved() for %s ...", class(x)[1])
+    mdebugf_pop("resolved() for %s ... done", class(x)[1])
+  }
+  
   resolved <- NextMethod()
   if (resolved) return(TRUE)
   
@@ -282,6 +299,12 @@ resolved.CallrFuture <- function(x, .signalEarly = TRUE, ...) {
 #' @keywords internal
 #' @export
 result.CallrFuture <- function(future, ...) {
+  debug <- isTRUE(getOption("future.debug"))
+  if (debug) {
+    mdebugf_push("result() for %s ...", class(future)[1])
+    mdebugf_pop("result() for %s ... done", class(future)[1])
+  }
+  
   result <- future[["result"]]
   if (!is.null(result)) {
     if (inherits(result, "FutureError")) stop(result)
@@ -327,12 +350,12 @@ await <- function(future, ...) {
   stop_if_not(is.finite(timeout), timeout >= 0)
   stop_if_not(is.finite(alpha), alpha > 0)
   
-  debug <- getOption("future.debug", FALSE)
+  debug <- isTRUE(getOption("future.debug"))
 
   expr <- future[["expr"]]
   process <- future[["process"]]
 
-  if (debug) mdebug("callr::wait() ...")
+  if (debug) mdebug_push("callr::wait() ...")
 
   ## Control callr info output
   oopts <- options(callr.verbose = debug)
@@ -355,7 +378,7 @@ await <- function(future, ...) {
   }
 
   if (process$is_alive()) {
-    if (debug) mdebug("- callr process: running")
+    if (debug) mdebug("callr process: running")
     label <- future[["label"]]
     if (is.null(label)) label <- "<none>"
     msg <- sprintf("AsyncNotReadyError: Polled for results for %s seconds every %g seconds, but asynchronous evaluation for %s future (%s) is still running: %s", timeout, delta, class(future)[1], sQuote(label), process$get_pid()) #nolint
@@ -364,8 +387,8 @@ await <- function(future, ...) {
   }
 
   if (debug) {
-    mdebug("- callr process: finished")
-    mdebug("callr::wait() ... done")
+    mdebug("callr process: finished")
+    mdebug_pop("callr::wait() ... done")
   }
 
   ## callr:::get_result() assert that "result" and "error" files exist
@@ -375,14 +398,15 @@ await <- function(future, ...) {
   ## If so, let's retry a few times before giving up.
   ## NOTE: This was observed, somewhat randomly, on R-devel (2018-04-20 r74620)
   ## on Linux (local and on Travis) with tests/demo.R /HB 2018-04-27
-  if (debug) mdebug("- callr:::get_result() ...")
+  if (debug) mdebug_push("callr:::get_result() ...")
+  
   for (ii in 4:0) {
     result <- tryCatch({
       process$get_result()
     }, error = identity)
     if (!inherits(result, "error")) break
     if (ii > 0L) {
-      if (debug) mdebug("- process$get_result() failed; will retry after 0.1s")
+      if (debug) mdebug("process$get_result() failed; will retry after 0.1s")
       Sys.sleep(0.1)
     }
   }
@@ -406,15 +430,17 @@ await <- function(future, ...) {
     ## Failed to launch?
     if (inherits(result, "FutureLaunchError")) {
       future[["result"]] <- result
+      if (debug) mdebug_pop("callr:::get_result() ... failed")
       stop(result)
     }
 
     ## Was the future explicitly interrupted?
     if (future[["state"]] == "interrupted") {
-      if (debug) mdebugf("- Detected interrupted %s whose result cannot be retrieved", sQuote(class(future)[1]))
+      if (debug) mdebugf("Detected interrupted %s whose result cannot be retrieved", sQuote(class(future)[1]))
       msg <- sprintf("A future ('%s') of class %s was interrupted (exit code %d), while running on localhost (pid %d)", label, class(future)[1], exit_code, pid)
       result <- FutureInterruptError(msg, future = future)
       future[["result"]] <- result
+      if (debug) mdebug_pop("callr:::get_result() ... failed")
       stop(result)
     }
 
@@ -424,16 +450,18 @@ await <- function(future, ...) {
       result <- FutureInterruptError(msg, future = future)
       future[["state"]] <- "interrupted"
       future[["result"]] <- result
+      if (debug) mdebug_pop("callr:::get_result() ... failed")
       stop(result)
     }
 
     ## Other, unknown reason for callr failure
     msg <- post_mortem_failure(result, future = future)
     ex <- CallrFutureError(msg, future = future)
+    if (debug) mdebug_pop("callr:::get_result() ... failed")
     stop(ex)
   }
   
-  if (debug) mdebugf("- callr:::get_result() ... done (after %d attempts)", ii)
+  if (debug) mdebugf_pop("callr:::get_result() ... done (after %d attempts)", ii)
 
   if (debug) {
     mdebug("Results:")
@@ -531,6 +559,12 @@ post_mortem_failure <- function(reason, future) {
 #' @importFrom parallelly killNode
 #' @export
 interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
+  debug <- isTRUE(getOption("future.debug"))
+  if (debug) {
+    mdebugf_push("interruptFuture() for %s ...", class(backend)[1])
+    mdebugf_pop("interruptFuture() for %s ... done", class(backend)[1])
+  }
+  
   ## Has interrupts been disabled by user?
   if (!backend[["interrupts"]]) return(future)
   process <- future[["process"]]

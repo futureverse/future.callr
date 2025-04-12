@@ -187,6 +187,34 @@ nbrOfFreeWorkers.CallrFutureBackend <- function(evaluator = NULL, background = F
 }
 
 
+
+#' @exportS3Method getFutureBackendConfigs CallrFutureBackend
+getFutureBackendConfigs.CallrFutureBackend <- local({
+  immediateConditionsPath <- import_future("immediateConditionsPath")
+  fileImmediateConditionHandler <- import_future("fileImmediateConditionHandler")
+  
+  function(future, ..., debug = isTRUE(getOption("future.debug"))) {
+    conditionClasses <- future[["conditions"]]
+    if (is.null(conditionClasses)) {
+      capture <- list()
+    } else {
+      path <- immediateConditionsPath(rootPath = tempdir())
+      capture <- list(
+        immediateConditionHandlers = list(
+          immediateCondition = function(cond) {
+            fileImmediateConditionHandler(cond, path = path)
+          }
+        )
+      )
+    }
+  
+    list(
+      capture = capture
+    )
+  }
+})
+
+
 #' Prints a callr future
 #'
 #' @param x An CallrFuture object
@@ -233,6 +261,15 @@ resolved.CallrFuture <- function(x, .signalEarly = TRUE, ...) {
   if (!inherits(process, "r_process")) return(FALSE)
   resolved <- !process$is_alive()
 
+  ## Collect and relay immediateCondition if they exists
+  conditions <- readImmediateConditions(signal = TRUE)
+  ## Record conditions as signaled
+  signaled <- c(x[[".signaledConditions"]], conditions)
+  x[[".signaledConditions"]] <- signaled
+
+  ## Signal conditions early? (happens only iff requested)
+  if (.signalEarly) signalEarly(x, ...)
+
   ## Signal errors early?
   if (.signalEarly && resolved) {
     ## Trigger a FutureError already here, if exit code != 0
@@ -256,6 +293,12 @@ result.CallrFuture <- function(future, ...) {
   }
 
   result <- await(future, cleanup = FALSE)
+
+  ## Collect and relay immediateCondition if they exists
+  conditions <- readImmediateConditions()
+  ## Record conditions as signaled
+  signaled <- c(future[[".signaledConditions"]], conditions)
+  future[[".signaledConditions"]] <- signaled
 
   if (!inherits(result, "FutureResult")) {
     if (inherits(result, "FutureLaunchError")) {

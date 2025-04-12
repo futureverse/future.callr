@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">future.callr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2-9206</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2-9208</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,6 +73,7 @@
 <h3 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li><p>Now ‘callr’ futures can be interrupted using <code><a href="https://future.futureverse.org/reference/interrupt.html" class="external-link">interrupt()</a></code>. An interrupted future can be <code><a href="https://future.futureverse.org/reference/reset.html" class="external-link">reset()</a></code> and relaunched.</p></li>
 <li><p>A future that failed due to the ‘callr’ worker process was terminated is now considerred interrupted, which for instance means that it can be <code><a href="https://future.futureverse.org/reference/reset.html" class="external-link">reset()</a></code>.</p></li>
+<li><p>Now ‘callr’ futures can relay <code>immediateCondition</code>:s in near real-time, e.g. <code>progression</code> contdions signals by the <strong>progressr</strong> package.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

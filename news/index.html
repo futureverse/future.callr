@@ -27,7 +27,9 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/future.callr.html">A Future for callr</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://www.futureverse.org/"><span class="fa fas fa-home"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://www.futureverse.org/"><span class="fa fas fa-home"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-packages" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Packages</button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-packages"><li><a class="external-link dropdown-item" href="https://doFuture.futureverse.org">doFuture (map-reduce)</a></li>
@@ -73,7 +75,7 @@
 <h3 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li><p>Now ‘callr’ futures can be interrupted using <code><a href="https://future.futureverse.org/reference/interrupt.html" class="external-link">interrupt()</a></code>. An interrupted future can be <code><a href="https://future.futureverse.org/reference/reset.html" class="external-link">reset()</a></code> and relaunched.</p></li>
 <li><p>A future that failed due to the ‘callr’ worker process was terminated is now considerred interrupted, which for instance means that it can be <code><a href="https://future.futureverse.org/reference/reset.html" class="external-link">reset()</a></code>.</p></li>
-<li><p>Now ‘callr’ futures relay <code>immediateCondition</code>:s in near real-time, e.g. <code>progression</code> contdions signals by the <strong>progressr</strong> package.</p></li>
+<li><p>Now ‘callr’ futures can relay <code>immediateCondition</code>:s in near real-time, e.g. <code>progression</code> contdions signals by the <strong>progressr</strong> package.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

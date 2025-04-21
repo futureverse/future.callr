@@ -199,8 +199,8 @@ nbrOfFreeWorkers.CallrFutureBackend <- function(evaluator = NULL, background = F
 
 
 
-#' @exportS3Method getFutureBackendConfigs CallrFutureBackend
-getFutureBackendConfigs.CallrFutureBackend <- local({
+#' @exportS3Method getFutureBackendConfigs CallrFuture
+getFutureBackendConfigs.CallrFuture <- local({
   immediateConditionsPath <- import_future("immediateConditionsPath")
   fileImmediateConditionHandler <- import_future("fileImmediateConditionHandler")
   
@@ -496,6 +496,8 @@ await <- function(future, ...) {
     result[["PROTOTYPE_WARNING"]] <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), max_head = Inf, collapse = ", ", last_collapse  = " and "))
   }
 
+  future[["result"]] <- result
+  
   reg <- backend[["reg"]]
   FutureRegistry(reg, action = "remove", future = future)
   

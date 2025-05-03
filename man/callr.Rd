@@ -4,7 +4,12 @@
 \alias{callr}
 \title{callr futures}
 \usage{
-callr(..., workers = availableCores(), supervise = FALSE)
+callr(
+  ...,
+  workers = availableCores(),
+  supervise = FALSE,
+  envir = parent.frame()
+)
 }
 \arguments{
 \item{workers}{The number of processes to be available for concurrent
@@ -12,16 +17,22 @@ callr futures.}
 
 \item{supervise}{(optional) Argument passed to \code{\link[callr:r_bg]{callr::r_bg()}}.}
 
+\item{envir}{The \link{environment} from where global objects should be
+identified.}
+
 \item{\ldots}{Additional arguments passed to \code{Future()}.}
 }
 \value{
 An object of class \code{CallrFuture}.
 }
 \description{
-A callr future is an asynchronous multiprocess
-future that will be evaluated in a background R session.
+\emph{WARNING: This function must never be called.
+It may only be used with \code{\link[future:plan]{future::plan()}}}
 }
 \details{
+A callr future is an asynchronous multiprocess
+future that will be evaluated in a background R session.
+
 callr futures rely on the \pkg{callr} package, which is supported
 on all operating systems.
 }

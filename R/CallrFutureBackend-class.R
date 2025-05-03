@@ -141,7 +141,7 @@ launchFuture.CallrFutureBackend <- local({
 })
 
 
-#' @importFrom future stopWorkers interrupt
+#' @importFrom future stopWorkers
 #' @export
 stopWorkers.CallrFutureBackend <- function(backend, ...) {
   debug <- isTRUE(getOption("future.debug"))
@@ -162,8 +162,8 @@ stopWorkers.CallrFutureBackend <- function(backend, ...) {
     on.exit(backend[["interrupts"]] <- FALSE)
   }
 
-  ## Interrupt all futures, which terminates the workers
-  futures <- lapply(futures, FUN = interrupt)
+  ## Cancel and interrupt all futures, which terminates the workers
+  futures <- lapply(futures, FUN = cancel, interrupt = TRUE)
 
   ## Erase registry
   futures <- FutureRegistry(reg, action = "reset")
@@ -579,6 +579,9 @@ interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
 
 #' callr futures
 #'
+#' _WARNING: This function must never be called.
+#'  It may only be used with [future::plan()]_
+#'
 #' A callr future is an asynchronous multiprocess
 #' future that will be evaluated in a background R session.
 #'
@@ -597,10 +600,16 @@ interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
 #' on all operating systems.
 #'
 #' @importFrom parallelly availableCores
-#' @importFrom future Future
+#' @importFrom future future
 #' @export
-callr <- function(..., workers = availableCores(), supervise = FALSE) {
-  stop("INTERNAL ERROR: The future.callr::callr() function implements the FutureBackend and should never be called directly")
+callr <- function(..., workers = availableCores(), supervise = FALSE, envir = parent.frame()) {
+  ## WORKAROUNDS:
+  ## (1) promises::future_promise() calls the "evaluator" function directly
+  if ("promises" %in% loadedNamespaces()) {
+    return(future(..., envir = envir))
+  }
+
+  stop("INTERNAL ERROR: The future.callr::callr() must never be called directly")
 }
 class(callr) <- c("callr", "multiprocess", "future", "function")
 attr(callr, "tweakable") <- "supervise"

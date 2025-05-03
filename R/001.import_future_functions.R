@@ -8,6 +8,7 @@ getFutureData <- NULL
 getFutureBackendConfigs <- NULL
 cancel <- NULL
 sQuoteLabel <- NULL
+.debug <- NULL
 
 ## Import private functions from 'future'
 import_future_functions <- function() {
@@ -43,5 +44,7 @@ import_future_functions <- function() {
         sQuote(label)
     }
   })
+
+  .debug <<- import_future(".debug", mode = "environment", default = new.env(parent = emptyenv()))
 }
 

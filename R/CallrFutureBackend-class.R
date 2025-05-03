@@ -158,7 +158,7 @@ stopWorkers.CallrFutureBackend <- function(backend, ...) {
   ## Enable interrupts temporarily, if disabled
   if (!isTRUE(backend[["interrupts"]])) {
     backend[["interrupts"]] <- TRUE
-    on.exit(backend[["interrupts"]] <- FALSE)
+    on.exit({ backend[["interrupts"]] <- FALSE }, add = TRUE)
   }
 
   ## Cancel and interrupt all futures, which terminates the workers
@@ -350,6 +350,10 @@ await <- function(future, ...) {
   stop_if_not(is.finite(alpha), alpha > 0)
   
   debug <- isTRUE(getOption("future.debug"))
+  if (debug) {
+    mdebug_push("await() ...")
+    on.exit(mdebug_pop())
+  }
 
   expr <- future[["expr"]]
   process <- future[["process"]]
@@ -358,7 +362,7 @@ await <- function(future, ...) {
 
   ## Control callr info output
   oopts <- options(callr.verbose = debug)
-  on.exit(options(oopts))
+  on.exit(options(oopts), add = TRUE)
 
   ## Sleep function - increases geometrically as a function of iterations
   sleep_fcn <- function(i) delta * alpha ^ (i - 1)
@@ -371,7 +375,7 @@ await <- function(future, ...) {
     if (Sys.time() > t_timeout) break
     timeout_ii <- sleep_fcn(ii)
     if (debug && ii %% 100 == 0) {
-      mdebugf("- iteration %d: callr::wait(timeout = %g)", ii, timeout_ii)
+      mdebugf("iteration %d: callr::wait(timeout = %g)", ii, timeout_ii)
     }
     res <- process$wait(timeout = timeout_ii)
     ii <- ii + 1L
@@ -412,13 +416,18 @@ await <- function(future, ...) {
       Sys.sleep(0.1)
     }
   }
-  
+
+  if (debug) mdebug_pop()
+
   ## Failed?
   if (inherits(result, "error")) {
+    if (debug) mdebugf_push("Received an %s ...", class(result)[1])
+
     pid <- process$get_pid()
     exit_code <- tryCatch(process$get_exit_status(), error = function(e) NA_integer_)
     alive <- process$is_alive()
-    
+    if (debug) mdebugf("Process is alive: %s", alive)
+
     ## Remove future from FutureRegistry?
     if (!alive) {
       reg <- backend[["reg"]]
@@ -430,7 +439,7 @@ await <- function(future, ...) {
     ## Failed to launch?
     if (inherits(result, "FutureLaunchError")) {
       future[["result"]] <- result
-      if (debug) mdebug_pop()
+      if (debug) mdebugf_pop()
       stop(result)
     }
 

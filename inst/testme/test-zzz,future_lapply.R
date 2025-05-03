@@ -1,5 +1,11 @@
+#' @tags future.apply
+#' @tags listenv
+#' @tags callr
 library(future.callr)
 library(listenv)
+
+# Run this test with debug on mostly to increase test coverage
+options(future.debug = TRUE)
 
 if (requireNamespace("future.apply", quietly = TRUE)) {
   future_lapply <- future.apply::future_lapply

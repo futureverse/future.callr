@@ -8,7 +8,7 @@ waitForWorker <- function(type,
          debug = FALSE) {
   if (debug) {
     mdebug_push("waitForWorker() ...")
-    mdebug_pop("waitForWorker() ... done")
+    on.exit(mdebug_pop())
   }
   
   stop_if_not(length(type) == 1, is.character(type), !is.na(type), nzchar(type))

@@ -56,7 +56,7 @@ launchFuture.CallrFutureBackend <- local({
     debug <- isTRUE(getOption("future.debug"))
     if (debug) {
       mdebugf_push("launchFuture() for %s ...", class(backend)[1])
-      mdebugf_pop("launchFuture() for %s ... done", class(backend)[1])
+      on.exit(mdebugf_pop())
     }
   
     ## Memoization
@@ -146,7 +146,7 @@ stopWorkers.CallrFutureBackend <- function(backend, ...) {
   debug <- isTRUE(getOption("future.debug"))
   if (debug) {
     mdebugf_push("stopWorkers() for %s ...", class(backend)[1])
-    mdebugf_pop("stopWorkers() for %s ... done", class(backend)[1])
+    on.exit(mdebugf_pop())
   }
   
   reg <- backend[["reg"]]
@@ -267,7 +267,7 @@ resolved.CallrFuture <- function(x, .signalEarly = TRUE, ...) {
   debug <- isTRUE(getOption("future.debug"))
   if (debug) {
     mdebugf_push("resolved() for %s ...", class(x)[1])
-    mdebugf_pop("resolved() for %s ... done", class(x)[1])
+    on.exit(mdebugf_pop())
   }
   
   resolved <- NextMethod()
@@ -301,7 +301,7 @@ result.CallrFuture <- function(future, ...) {
   debug <- isTRUE(getOption("future.debug"))
   if (debug) {
     mdebugf_push("result() for %s ...", class(future)[1])
-    mdebugf_pop("result() for %s ... done", class(future)[1])
+    on.exit(mdebugf_pop())
   }
   
   result <- future[["result"]]
@@ -370,8 +370,9 @@ await <- function(future, ...) {
     ## Timed out?
     if (Sys.time() > t_timeout) break
     timeout_ii <- sleep_fcn(ii)
-    if (debug && ii %% 100 == 0)
+    if (debug && ii %% 100 == 0) {
       mdebugf("- iteration %d: callr::wait(timeout = %g)", ii, timeout_ii)
+    }
     res <- process$wait(timeout = timeout_ii)
     ii <- ii + 1L
   }
@@ -380,13 +381,16 @@ await <- function(future, ...) {
     if (debug) mdebug("callr process: running")
     label <- sQuoteLabel(future[["label"]])
     msg <- sprintf("AsyncNotReadyError: Polled for results for %s seconds every %g seconds, but asynchronous evaluation for %s future (%s) is still running: %s", timeout, delta, class(future)[1], label, process$get_pid()) #nolint
-    if (debug) mdebug(msg)
+    if (debug) {
+      mdebug(msg)
+      mdebug_pop()
+    }
     stop(FutureError(msg, future = future))
   }
 
   if (debug) {
     mdebug("callr process: finished")
-    mdebug_pop("callr::wait() ... done")
+    mdebug_pop()
   }
 
   ## callr:::get_result() assert that "result" and "error" files exist
@@ -426,14 +430,14 @@ await <- function(future, ...) {
     ## Failed to launch?
     if (inherits(result, "FutureLaunchError")) {
       future[["result"]] <- result
-      if (debug) mdebug_pop("callr:::get_result() ... failed")
+      if (debug) mdebug_pop()
       stop(result)
     }
 
     state <- future[["state"]]
     stop_if_not(state %in% c("canceled", "interrupted", "running"))
     
-    event <- if (state %in% "running") {
+    if (state %in% "running") {
       event <- sprintf("failed for unknown reason while %s", state)
       port_mortem <- post_mortem_failure(result, future = future)
       future[["state"]] <- "interrupted"
@@ -443,18 +447,19 @@ await <- function(future, ...) {
     }
 
     label <- sQuoteLabel(future[["label"]])
-    msg <- sprintf("Future (%s) of class %s %s, while running on localhost (pid %d; exit code)", label, class(future)[1], event, exit_code, pid)
+
+    msg <- sprintf("Future (%s) of class %s %s, while running on localhost (pid %d; exit code %d)", label, class(future)[1], event, pid, exit_code)
     if (!is.null(port_mortem)) msg <- sprintf("%s. %s", msg, port_mortem)
     if (debug) mdebug(msg)
     result <- FutureInterruptError(msg, future = future)
     future[["result"]] <- result
-    if (debug) mdebug_pop("callr:::get_result() ... failed")
+    if (debug) mdebug_pop()
     stop(result)
   }
   
-  if (debug) mdebugf_pop("callr:::get_result() ... done (after %d attempts)", ii)
-
   if (debug) {
+    mdebugf("Done after %d attempts", ii)
+    mdebugf_pop()
     mdebug("Results:")
     mstr(result)
   }
@@ -552,7 +557,7 @@ interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
   debug <- isTRUE(getOption("future.debug"))
   if (debug) {
     mdebugf_push("interruptFuture() for %s ...", class(backend)[1])
-    mdebugf_pop("interruptFuture() for %s ... done", class(backend)[1])
+    on.exit(mdebugf_pop())
   }
   
   ## Has interrupts been disabled by user?

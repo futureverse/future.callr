@@ -7,6 +7,7 @@ evalFuture <- NULL
 getFutureData <- NULL
 getFutureBackendConfigs <- NULL
 cancel <- NULL
+sQuoteLabel <- NULL
 
 ## Import private functions from 'future'
 import_future_functions <- function() {
@@ -31,4 +32,16 @@ import_future_functions <- function() {
       interrupt(x, ...)
     }
   }
+
+  ## Until future (>= 1.49.0) is on CRAN
+  sQuoteLabel <<- import_future("sQuoteLabel", default = function(label) {
+    if (is.null(label)) {
+        "NULL"
+    } else if (is.na(label)) {
+        "NA"
+    } else {
+        sQuote(label)
+    }
+  })
 }
+

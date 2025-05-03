@@ -65,9 +65,8 @@ launchFuture.CallrFutureBackend <- local({
     }
 
     if (future[["state"]] != "created") {
-      label <- future[["label"]]
-      if (is.null(label)) label <- "<none>"
-      msg <- sprintf("A future ('%s') can only be launched once.", label)
+      label <- sQuoteLabel(future[["label"]])
+      msg <- sprintf("A future ('%s') can only be launched once", label)
       stop(FutureError(msg, future = future))
     }
 
@@ -379,9 +378,8 @@ await <- function(future, ...) {
 
   if (process$is_alive()) {
     if (debug) mdebug("callr process: running")
-    label <- future[["label"]]
-    if (is.null(label)) label <- "<none>"
-    msg <- sprintf("AsyncNotReadyError: Polled for results for %s seconds every %g seconds, but asynchronous evaluation for %s future (%s) is still running: %s", timeout, delta, class(future)[1], sQuote(label), process$get_pid()) #nolint
+    label <- sQuoteLabel(future[["label"]])
+    msg <- sprintf("AsyncNotReadyError: Polled for results for %s seconds every %g seconds, but asynchronous evaluation for %s future (%s) is still running: %s", timeout, delta, class(future)[1], label, process$get_pid()) #nolint
     if (debug) mdebug(msg)
     stop(FutureError(msg, future = future))
   }
@@ -413,8 +411,6 @@ await <- function(future, ...) {
   
   ## Failed?
   if (inherits(result, "error")) {
-    label <- future[["label"]]
-    if (is.null(label)) label <- "<none>"
     pid <- process$get_pid()
     exit_code <- tryCatch(process$get_exit_status(), error = function(e) NA_integer_)
     alive <- process$is_alive()
@@ -434,31 +430,26 @@ await <- function(future, ...) {
       stop(result)
     }
 
-    ## Was the future explicitly interrupted?
-    if (future[["state"]] == "interrupted") {
-      if (debug) mdebugf("Detected interrupted %s whose result cannot be retrieved", sQuote(class(future)[1]))
-      msg <- sprintf("A future ('%s') of class %s was interrupted (exit code %d), while running on localhost (pid %d)", label, class(future)[1], exit_code, pid)
-      result <- FutureInterruptError(msg, future = future)
-      future[["result"]] <- result
-      if (debug) mdebug_pop("callr:::get_result() ... failed")
-      stop(result)
-    }
-
-    ## Was the future implicitly interrupted?
-    if (!alive) {
-      msg <- sprintf("A future ('%s') of class %s was interrupted for unknown reasons (exit code %s), while running on localhost (pid %d)", label, class(future)[1], exit_code, pid)
-      result <- FutureInterruptError(msg, future = future)
+    state <- future[["state"]]
+    stop_if_not(state %in% c("canceled", "interrupted", "running"))
+    
+    event <- if (state %in% "running") {
+      event <- sprintf("failed for unknown reason while %s", state)
+      port_mortem <- post_mortem_failure(result, future = future)
       future[["state"]] <- "interrupted"
-      future[["result"]] <- result
-      if (debug) mdebug_pop("callr:::get_result() ... failed")
-      stop(result)
+    } else {
+      event <- sprintf("was %s", state)
+      port_mortem <- NULL
     }
 
-    ## Other, unknown reason for callr failure
-    msg <- post_mortem_failure(result, future = future)
-    ex <- CallrFutureError(msg, future = future)
+    label <- sQuoteLabel(future[["label"]])
+    msg <- sprintf("Future (%s) of class %s %s, while running on localhost (pid %d; exit code)", label, class(future)[1], event, exit_code, pid)
+    if (!is.null(port_mortem)) msg <- sprintf("%s. %s", msg, port_mortem)
+    if (debug) mdebug(msg)
+    result <- FutureInterruptError(msg, future = future)
+    future[["result"]] <- result
     if (debug) mdebug_pop("callr:::get_result() ... failed")
-    stop(ex)
+    stop(result)
   }
   
   if (debug) mdebugf_pop("callr:::get_result() ... done (after %d attempts)", ii)
@@ -485,9 +476,8 @@ await <- function(future, ...) {
       res <- process$read_all_error()
       res
     }, error = function(ex) {
-      label <- future[["label"]]
-      if (is.null(label)) label <- "<none>"
-      warning(FutureWarning(sprintf("Failed to retrieve standard error from %s (%s). The reason was: %s", class(future)[1], sQuote(label), conditionMessage(ex)), future = future))
+      label <- sQuoteLabel(future[["label"]])
+      warning(FutureWarning(sprintf("Failed to retrieve standard error from %s (%s). The reason was: %s", class(future)[1], label, conditionMessage(ex)), future = future))
       NULL
     })
   }
@@ -516,9 +506,7 @@ post_mortem_failure <- function(reason, future) {
   if (inherits(reason, "error")) reason <- conditionMessage(reason)
 
   ## (2) Information on the future
-  label <- future[["label"]]
-  if (is.null(label)) label <- "<none>"
-  stop_if_not(length(label) == 1L)
+  label <- sQuoteLabel(future[["label"]])
 
   ## (3) POST-MORTEM ANALYSIS:
   postmortem <- list()

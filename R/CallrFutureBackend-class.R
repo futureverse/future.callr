@@ -614,5 +614,6 @@ callr <- function(..., workers = availableCores(), supervise = FALSE, envir = pa
   stop("INTERNAL ERROR: The future.callr::callr() must never be called directly")
 }
 class(callr) <- c("callr", "multiprocess", "future", "function")
+attr(callr, "init") <- TRUE
 attr(callr, "tweakable") <- "supervise"
 attr(callr, "factory") <- CallrFutureBackend

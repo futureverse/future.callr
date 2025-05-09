@@ -1,5 +1,5 @@
 Package: future.callr
-Version: 0.8.2-9212
+Version: 0.8.2-9213
 Depends:
     R (>= 3.4.0),
     future (>= 1.40.0)
@@ -14,6 +14,9 @@ Suggests:
     R.rsp
 VignetteBuilder:
     R.rsp
+Remotes:
+    futureverse/globals@0.18.0,
+    futureverse/future@develop
 Title: A Future API for Parallel Processing using 'callr'
 Authors@R: c(person("Henrik", "Bengtsson",
                     role = c("aut", "cre", "cph"),
@@ -24,6 +27,7 @@ License: LGPL (>= 2.1)
 LazyLoad: TRUE
 URL: https://future.callr.futureverse.org, https://github.com/futureverse/future.callr
 BugReports: https://github.com/futureverse/future.callr/issues
+Language: en-US
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

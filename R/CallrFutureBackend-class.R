@@ -140,7 +140,7 @@ launchFuture.CallrFutureBackend <- local({
 })
 
 
-#' @importFrom future stopWorkers
+#' @importFrom future cancel stopWorkers
 #' @export
 stopWorkers.CallrFutureBackend <- function(backend, ...) {
   debug <- isTRUE(getOption("future.debug"))

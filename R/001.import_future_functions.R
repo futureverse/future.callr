@@ -6,7 +6,6 @@ signalEarly <- NULL
 evalFuture <- NULL
 getFutureData <- NULL
 getFutureBackendConfigs <- NULL
-cancel <- NULL
 sQuoteLabel <- NULL
 .debug <- NULL
 
@@ -25,7 +24,6 @@ import_future_functions <- function() {
   registerS3method("getFutureBackendConfigs", "CallrFuture", getFutureBackendConfigs.CallrFuture)
 
   ## future (>= 1.49.0)
-  cancel <<- import_future("cancel")
   sQuoteLabel <<- import_future("sQuoteLabel")
 
   .debug <<- import_future(".debug", mode = "environment", default = new.env(parent = emptyenv()))

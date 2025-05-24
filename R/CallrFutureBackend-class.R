@@ -65,7 +65,7 @@ launchFuture.CallrFutureBackend <- local({
     }
 
     if (future[["state"]] != "created") {
-      label <- sQuoteLabel(future[["label"]])
+      label <- sQuoteLabel(future)
       msg <- sprintf("A future ('%s') can only be launched once", label)
       stop(FutureError(msg, future = future))
     }
@@ -383,7 +383,7 @@ await <- function(future, ...) {
 
   if (process$is_alive()) {
     if (debug) mdebug("callr process: running")
-    label <- sQuoteLabel(future[["label"]])
+    label <- sQuoteLabel(future)
     msg <- sprintf("AsyncNotReadyError: Polled for results for %s seconds every %g seconds, but asynchronous evaluation for %s future (%s) is still running: %s", timeout, delta, class(future)[1], label, process$get_pid()) #nolint
     if (debug) {
       mdebug(msg)
@@ -455,7 +455,7 @@ await <- function(future, ...) {
       port_mortem <- NULL
     }
 
-    label <- sQuoteLabel(future[["label"]])
+    label <- sQuoteLabel(future)
 
     msg <- sprintf("Future (%s) of class %s %s, while running on localhost (pid %d; exit code %d)", label, class(future)[1], event, pid, exit_code)
     if (!is.null(port_mortem)) msg <- sprintf("%s. %s", msg, port_mortem)
@@ -490,7 +490,7 @@ await <- function(future, ...) {
       res <- process$read_all_error()
       res
     }, error = function(ex) {
-      label <- sQuoteLabel(future[["label"]])
+      label <- sQuoteLabel(future)
       warning(FutureWarning(sprintf("Failed to retrieve standard error from %s (%s). The reason was: %s", class(future)[1], label, conditionMessage(ex)), future = future))
       NULL
     })
@@ -520,7 +520,7 @@ post_mortem_failure <- function(reason, future) {
   if (inherits(reason, "error")) reason <- conditionMessage(reason)
 
   ## (2) Information on the future
-  label <- sQuoteLabel(future[["label"]])
+  label <- sQuoteLabel(future)
 
   ## (3) POST-MORTEM ANALYSIS:
   postmortem <- list()

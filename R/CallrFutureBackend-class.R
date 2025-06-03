@@ -605,12 +605,6 @@ interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
 #' @importFrom future future
 #' @export
 callr <- function(..., workers = availableCores(), supervise = FALSE, envir = parent.frame()) {
-  ## WORKAROUNDS:
-  ## (1) promises::future_promise() calls the "evaluator" function directly
-  if ("promises" %in% loadedNamespaces()) {
-    return(future(..., envir = envir))
-  }
-
   stop("INTERNAL ERROR: The future.callr::callr() must never be called directly")
 }
 class(callr) <- c("callr", "multiprocess", "future", "function")

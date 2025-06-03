@@ -11,3 +11,4 @@ mprint <- future.callr:::mprint
 mstr <- future.callr:::mstr
 printf <- future.callr:::printf
 trim <- future.callr:::trim
+commaq <- future.callr:::commaq

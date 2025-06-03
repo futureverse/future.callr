@@ -97,3 +97,5 @@ is_os <- function(name) {
     grepl(paste0("^", name), R.version[["os"]])
   }
 }
+
+commaq <- function(x, sep = ", ") paste(sQuote(x), collapse = sep)

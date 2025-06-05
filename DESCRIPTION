@@ -2,7 +2,7 @@ Package: future.callr
 Version: 0.8.2-9221
 Depends:
     R (>= 3.4.0),
-    future (>= 1.49.0)
+    future (>= 1.58.0)
 Imports:
     parallelly,
     callr

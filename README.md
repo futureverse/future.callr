@@ -21,7 +21,7 @@ utilizes the **[callr]** package.
 For example,
 
 ```r
-> library("future.callr")
+> library(future.callr)
 > plan(callr)
 >
 > x %<-% { Sys.sleep(5); 3.14 }
@@ -109,7 +109,7 @@ futures are evaluated_.  For instance, to use `callr` futures, run the
 demo as:
 
 ```r
-library("future.callr")
+library(future.callr)
 plan(callr)
 demo("mandelbrot", package = "future", ask = FALSE)
 ```

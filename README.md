@@ -88,11 +88,10 @@ A third advantage with `callr` futures, is that there is not risk for
 port-clashing with other processes on the system when clusters are set
 up (*), because **callr** does not rely on ports.  Furthermore, on
 Windows, the firewall triggers an alert that the user needs to approve
-whenever a not-previously-approved port is requested by R - [which
-happens also for local, non-public
-ports](https://stackoverflow.com/questions/47353848/localhost-connection-without-firewall-popup/47542866)
-that are used by `SOCKcluster`:s.  When using `callr` futures, no
-sockets and therefore no ports are involved.
+whenever a not-previously-approved port is requested by R - which
+happens also for local, non-public ports (StackOverflow Question
+#47353848) that are used by `SOCKcluster`:s.  When using `callr`
+futures, no sockets and therefore no ports are involved.
 
 (*) To lower the risk for such clashes `SOCKcluster`:s (of the
 **parallel** package) request random ports, but clashes still occur at

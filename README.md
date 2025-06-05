@@ -1,7 +1,7 @@
 
 
 <div id="badges"><!-- pkgdown markup -->
-<a href="https://CRAN.R-project.org/web/checks/check_results_future.callr.html"><img border="0" src="https://www.r-pkg.org/badges/version/future.callr" alt="CRAN check status"/></a> <a href="https://github.com/HenrikBengtsson/future.callr/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/HenrikBengtsson/future.callr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>  <a href="https://github.com/HenrikBengtsson/future.callr/actions?query=workflow%3Afuture_tests"><img border="0" src="https://github.com/HenrikBengtsson/future.callr/actions/workflows/future_tests.yaml/badge.svg?branch=develop" alt="future.tests checks status"/></a>   <a href="https://app.codecov.io/gh/HenrikBengtsson/future.callr"><img border="0" src="https://codecov.io/gh/HenrikBengtsson/future.callr/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
+<a href="https://CRAN.R-project.org/web/checks/check_results_future.callr.html"><img border="0" src="https://www.r-pkg.org/badges/version/future.callr" alt="CRAN check status"/></a> <a href="https://github.com/futureverse/future.callr/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/futureverse/future.callr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>  <a href="https://github.com/futureverse/future.callr/actions?query=workflow%3Afuture_tests"><img border="0" src="https://github.com/futureverse/future.callr/actions/workflows/future_tests.yaml/badge.svg?branch=develop" alt="future.tests checks status"/></a>   <a href="https://app.codecov.io/gh/futureverse/future.callr"><img border="0" src="https://codecov.io/gh/futureverse/future.callr/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
 </div>
 
 # future.callr: A Future API for Parallel Processing using 'callr' 
@@ -21,7 +21,7 @@ utilizes the **[callr]** package.
 For example,
 
 ```r
-> library("future.callr")
+> library(future.callr)
 > plan(callr)
 >
 > x %<-% { Sys.sleep(5); 3.14 }
@@ -53,12 +53,12 @@ When using `callr` futures, each future is resolved in a fresh
 background R session which ends as soon as the value of the future has
 been collected.  In contrast, `multisession` futures are resolved in
 background R worker sessions that serve multiple futures over their
-life spans.  The advantage with using a new R process for each future
-is that it is that the R environment is guaranteed not to be
-contaminated by previous futures, e.g. memory allocations, finalizers,
-modified options, and loaded and attached packages.  The disadvantage,
-is an added overhead of launching a new R process.  (At the moment, I
-am neither aware of formal benchmarking of this extra overhead nor of
+life spans.  The advantage of using a new R process for each future is
+that the R environment is guaranteed not to be contaminated by
+previous futures, e.g. memory allocations, finalizers, modified
+options, and loaded and attached packages.  The disadvantage, is an
+added overhead of launching a new R process.  (At the moment, I am
+neither aware of formal benchmarking of this extra overhead nor of
 performance comparisons of `callr` to alternative future backends.)
 
 
@@ -88,11 +88,10 @@ A third advantage with `callr` futures, is that there is not risk for
 port-clashing with other processes on the system when clusters are set
 up (*), because **callr** does not rely on ports.  Furthermore, on
 Windows, the firewall triggers an alert that the user needs to approve
-whenever a not-previously-approved port is requested by R - [which
-happens also for local, non-public
-ports](https://stackoverflow.com/questions/47353848/localhost-connection-without-firewall-popup/47542866)
-that are used by `SOCKcluster`:s.  When using `callr` futures, no
-sockets and therefore no ports are involved.
+whenever a not-previously-approved port is requested by R - which
+happens also for local, non-public ports (StackOverflow Question
+#47353848) that are used by `SOCKcluster`:s.  When using `callr`
+futures, no sockets and therefore no ports are involved.
 
 (*) To lower the risk for such clashes `SOCKcluster`:s (of the
 **parallel** package) request random ports, but clashes still occur at
@@ -109,7 +108,7 @@ futures are evaluated_.  For instance, to use `callr` futures, run the
 demo as:
 
 ```r
-library("future.callr")
+library(future.callr)
 plan(callr)
 demo("mandelbrot", package = "future", ask = FALSE)
 ```
@@ -132,7 +131,7 @@ install.packages("future.callr")
 
 To install the pre-release version that is available in Git branch `develop` on GitHub, use:
 ```r
-remotes::install_github("HenrikBengtsson/future.callr", ref="develop")
+remotes::install_github("futureverse/future.callr", ref="develop")
 ```
 This will install the package from source.  
 

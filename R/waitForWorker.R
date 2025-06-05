@@ -4,9 +4,13 @@ waitForWorker <- function(type,
          await = NULL,
          timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
          delta = getOption("future.wait.interval", 0.2),
-         alpha = getOption("future.wait.alpha", 1.01)) {
-  debug <- getOption("future.debug", FALSE)
-
+         alpha = getOption("future.wait.alpha", 1.01),
+         debug = FALSE) {
+  if (debug) {
+    mdebug_push("waitForWorker() ...")
+    on.exit(mdebug_pop())
+  }
+  
   stop_if_not(length(type) == 1, is.character(type), !is.na(type), nzchar(type))
   stop_if_not(is.null(await) || is.function(await))
   workers <- as.integer(workers)

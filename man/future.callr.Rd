@@ -21,3 +21,16 @@ demo("mandelbrot", package = "future", ask = FALSE)
 }
 
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://future.callr.futureverse.org}
+  \item \url{https://github.com/futureverse/future.callr}
+  \item Report bugs at \url{https://github.com/futureverse/future.callr/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Henrik Bengtsson \email{henrikb@braju.com} (\href{https://orcid.org/0000-0002-7579-5165}{ORCID}) [copyright holder]
+
+}

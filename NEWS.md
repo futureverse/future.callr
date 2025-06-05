@@ -1,3 +1,23 @@
+# Version 0.10.0 [2025-06-05]
+
+## New Features
+
+ * Now 'callr' futures can be canceled using `cancel()`, which also
+   interrupts them by default, which in turn frees up compute
+   resources sooner. Map-reduce API such as **future.apply**,
+   **doFuture**, and **furrr** can take advantage of this by
+   canceling all non-resolved futures whenever they detect an error
+   in one of the futures. Also, canceled futures can be `reset()` 
+   and thereafter relaunched, possibly on another future backend.
+
+ * A future that failed due to the 'callr' worker process was
+   terminated is now considered interrupted, which for instance means
+   that it can be `reset()`.
+
+ * Now 'callr' futures relay `immediateCondition`:s in near real-time,
+   e.g. `progression` conditions signals by the **progressr** package.
+ 
+
 # Version 0.8.2 [2023-08-08]
 
 ## Bug Fixes

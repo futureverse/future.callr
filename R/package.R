@@ -13,9 +13,6 @@
 #' demo("mandelbrot", package = "future", ask = FALSE)
 #' }
 #'
-#' @docType package
 #' @aliases future.callr-package
 #' @name future.callr
-NULL
-
-
+"_PACKAGE"

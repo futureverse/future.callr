@@ -18,7 +18,6 @@ import_future_functions <- function() {
   signalEarly <<- import_future("signalEarly")
   
   ## future (>= 1.40.0)
-  prune_fcn <<- import_future("prune_fcn")
   evalFuture <<- import_future("evalFuture")
   getFutureData <<- import_future("getFutureData")
   getFutureBackendConfigs <<- import_future("getFutureBackendConfigs")

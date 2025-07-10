@@ -1,3 +1,12 @@
+# Version 0.10.1 [2025-07-10]
+
+## Bug Fixes
+
+ * `resolved()` for callr futures could throw a `FutureError` in some
+   cases, e.g. a `FutureInterruptError` if the future was terminated
+   abruptly.
+ 
+
 # Version 0.10.0 [2025-06-05]
 
 ## New Features

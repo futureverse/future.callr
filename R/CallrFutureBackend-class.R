@@ -264,33 +264,51 @@ print.CallrFuture <- function(x, ...) {
 #' @keywords internal
 #' @export
 resolved.CallrFuture <- function(x, .signalEarly = TRUE, ...) {
+  resolved <- NA
+  
   debug <- isTRUE(getOption("future.debug"))
   if (debug) {
     mdebugf_push("resolved() for %s ...", class(x)[1])
-    on.exit(mdebugf_pop())
+    on.exit({
+      mdebugf("Future state: %s", sQuote(x[["state"]]))
+      mdebugf("Resolved: %s", resolved)
+      mdebugf_pop()
+    })
   }
-  
-  resolved <- NextMethod()
-  if (resolved) return(TRUE)
-  
-  process <- x[["process"]]
-  if (!inherits(process, "r_process")) return(FALSE)
-  resolved <- !process$is_alive()
 
+  ## Already resolved?
+  resolved <- NextMethod()
+  if (debug) mdebugf("Future state: %s", sQuote(x[["state"]]))
+  if (resolved) return(TRUE)
+
+  process <- x[["process"]]
+  alive <- local({
+    alive <- NA
+    if (debug) {
+      mdebugf_push("Querying process ...")
+      mdebugf("Process is alive: %s", alive)
+      on.exit(mdebug_pop())
+    }
+    if (inherits(process, "r_process")) {
+      alive <- process$is_alive()
+    }
+    alive
+  })
+  resolved <- (!is.na(alive) && !alive)
+  
   ## Collect and relay immediateCondition if they exists
+  if (debug) mdebugf_push("Collect immediate conditions ...")
   conditions <- readImmediateConditions(signal = TRUE)
   ## Record conditions as signaled
-  signaled <- c(x[[".signaledConditions"]], conditions)
-  x[[".signaledConditions"]] <- signaled
+  if (length(conditions) > 0) {
+    signaled <- c(x[[".signaledConditions"]], conditions)
+    x[[".signaledConditions"]] <- signaled
+  }
+  if (debug) mdebug_pop()
 
   ## Signal conditions early? (happens only iff requested)
   if (.signalEarly) signalEarly(x, ...)
 
-  ## Signal errors early?
-  if (.signalEarly && resolved) {
-    ## Trigger a FutureError already here, if exit code != 0
-    if (process$get_exit_status() != 0L) result(x)
-  }
   resolved
 }
 
@@ -352,6 +370,7 @@ await <- function(future, ...) {
   debug <- isTRUE(getOption("future.debug"))
   if (debug) {
     mdebug_push("await() ...")
+    mdebugf("Future state: %s", sQuote(future[["state"]]))
     on.exit(mdebug_pop())
   }
 
@@ -421,7 +440,10 @@ await <- function(future, ...) {
 
   ## Failed?
   if (inherits(result, "error")) {
-    if (debug) mdebugf_push("Received an %s ...", class(result)[1])
+    if (debug) {
+      mdebugf_push("Received an %s ...", class(result)[1])
+      mprint(result)
+    }
 
     pid <- process$get_pid()
     exit_code <- tryCatch(process$get_exit_status(), error = function(e) NA_integer_)

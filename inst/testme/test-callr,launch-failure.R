@@ -22,13 +22,10 @@ cat("stop('boom')\n", file = tf)
 f <- local({ opwd <- setwd(dirname(tf)); on.exit(setwd(opwd)); future(42L) })
 
 message("  - Waiting for future to finish")
-repeat {
-  res <- tryCatch(resolved(f), error = identity)
-  if (!is.logical(res) || res) break
-}
-print(res)
-stopifnot(inherits(res, "error"), inherits(res, "FutureError"),
-          inherits(res, c("FutureInterruptError", "CallrFutureError")))
+f <- resolve(f)
+r <- resolved(f)
+print(r)
+stopifnot(is.logical(r), isTRUE(r))
 
 message("  - Getting results")
 res <- tryCatch(result(f), error = identity)

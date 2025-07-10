@@ -17,7 +17,7 @@ Run `revdepcheck::revdep_details(, "dipsaus")` for more info
 *   checking compiled code ... NOTE
     ```
     File ‘dipsaus/libs/dipsaus.so’:
-      Found non-API calls to R: ‘CLOENV’, ‘ENCLOS’
+      Found non-API call to R: ‘ENCLOS’
     
     Compiled code should not call non-API entry points in R.
     
@@ -34,7 +34,7 @@ Run `revdepcheck::revdep_details(, "dipsaus")` for more info
 * GitHub: https://github.com/giuseppec/iml
 * Source code: https://github.com/cran/iml
 * Date/Publication: 2025-02-24 12:50:02 UTC
-* Number of recursive dependencies: 174
+* Number of recursive dependencies: 173
 
 Run `revdepcheck::revdep_details(, "iml")` for more info
 
@@ -83,30 +83,6 @@ Run `revdepcheck::revdep_details(, "iml")` for more info
     Execution halted
     ```
 
-# mlr3spatial
-
-<details>
-
-* Version: 0.5.0
-* GitHub: https://github.com/mlr-org/mlr3spatial
-* Source code: https://github.com/cran/mlr3spatial
-* Date/Publication: 2024-03-09 13:00:02 UTC
-* Number of recursive dependencies: 91
-
-Run `revdepcheck::revdep_details(, "mlr3spatial")` for more info
-
-</details>
-
-## In both
-
-*   checking package dependencies ... ERROR
-    ```
-    Package required but not available: ‘terra’
-    
-    See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
-    manual.
-    ```
-
 # netShiny
 
 <details>
@@ -115,7 +91,7 @@ Run `revdepcheck::revdep_details(, "mlr3spatial")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/netShiny
 * Date/Publication: 2022-08-22 09:30:02 UTC
-* Number of recursive dependencies: 135
+* Number of recursive dependencies: 134
 
 Run `revdepcheck::revdep_details(, "netShiny")` for more info
 
@@ -125,8 +101,7 @@ Run `revdepcheck::revdep_details(, "netShiny")` for more info
 
 *   checking package dependencies ... ERROR
     ```
-    Packages required but not available:
-      'ggVennDiagram', 'ipc', 'Matrix', 'netgwas'
+    Packages required but not available: 'ggVennDiagram', 'ipc', 'netgwas'
     
     See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
     manual.
@@ -136,10 +111,10 @@ Run `revdepcheck::revdep_details(, "netShiny")` for more info
 
 <details>
 
-* Version: 2.8.0
+* Version: 2.9.0
 * GitHub: https://github.com/stan-dev/projpred
 * Source code: https://github.com/cran/projpred
-* Date/Publication: 2023-12-15 00:00:02 UTC
+* Date/Publication: 2025-07-08 22:00:02 UTC
 * Number of recursive dependencies: 160
 
 Run `revdepcheck::revdep_details(, "projpred")` for more info
@@ -150,37 +125,9 @@ Run `revdepcheck::revdep_details(, "projpred")` for more info
 
 *   checking package dependencies ... ERROR
     ```
-    Packages required but not available: 'loo', 'ordinal', 'mclogit'
+    Packages required but not available: 'ordinal', 'mclogit'
     
-    Packages suggested but not available for checking:
-      'rstanarm', 'brms', 'cmdstanr', 'bayesplot', 'posterior'
-    
-    See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
-    manual.
-    ```
-
-# SpaDES.core
-
-<details>
-
-* Version: 2.1.0
-* GitHub: https://github.com/PredictiveEcology/SpaDES.core
-* Source code: https://github.com/cran/SpaDES.core
-* Date/Publication: 2024-06-02 11:02:47 UTC
-* Number of recursive dependencies: 133
-
-Run `revdepcheck::revdep_details(, "SpaDES.core")` for more info
-
-</details>
-
-## In both
-
-*   checking package dependencies ... ERROR
-    ```
-    Packages required but not available: 'quickPlot', 'reproducible'
-    
-    Packages suggested but not available for checking:
-      'DiagrammeR', 'ggplotify', 'NLMR', 'SpaDES.tools'
+    Package suggested but not available for checking: ‘cmdstanr’
     
     See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
     manual.

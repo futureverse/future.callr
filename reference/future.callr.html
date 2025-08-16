@@ -17,7 +17,7 @@ The Future API is defined by the future package."><!-- Global site tag (gtag.js)
 
     <a class="navbar-brand me-2" href="../index.html">future.callr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.1-9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,8 @@ The Future API is defined by the <span class="pkg">future</span> package.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>To use callr futures, load <span class="pkg">future.callr</span>, and
-select the type of future you wish to use, e.g. <code>plan(callr)</code>.</p>
+select the type of future you wish to use, e.g.
+<code>plan(future.callr::callr)</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -101,7 +102,8 @@ select the type of future you wish to use, e.g. <code>plan(callr)</code>.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">callr</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://future.futureverse.org" class="external-link">future</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future.callr</span><span class="fu">::</span><span class="va"><a href="callr.html">callr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/demo.html" class="external-link">demo</a></span><span class="op">(</span><span class="st">"mandelbrot"</span>, package <span class="op">=</span> <span class="st">"future"</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -225,9 +227,6 @@ select the type of future you wish to use, e.g. <code>plan(callr)</code>.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Plotting tile #4 of 9 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating tile #4 of 9 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  done</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Plotting tile #5 of 9 ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating tile #5 of 9 ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  done</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Plotting tile #7 of 9 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating tile #7 of 9 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  done</span>
@@ -236,6 +235,9 @@ select the type of future you wish to use, e.g. <code>plan(callr)</code>.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  done</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Plotting tile #6 of 9 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating tile #6 of 9 ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  done</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Plotting tile #5 of 9 ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating tile #5 of 9 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  done</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Plotting tile #9 of 9 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating tile #9 of 9 ...</span>

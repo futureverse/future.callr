@@ -1,9 +1,9 @@
-library(future.callr)
+library(future)
 
 message("*** nbrOfWorkers() ...")
 
 ncores <- availableCores()
-n <- nbrOfWorkers(callr)
+n <- nbrOfWorkers(future.callr::callr)
 message("Number of workers: ", n)
 stopifnot(n == ncores)
 

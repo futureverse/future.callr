@@ -5,11 +5,13 @@
 #' The Future API is defined by the \pkg{future} package.
 #'
 #' To use callr futures, load \pkg{future.callr}, and
-#' select the type of future you wish to use, e.g. `plan(callr)`.
+#' select the type of future you wish to use, e.g.
+#' `plan(future.callr::callr)`.
 #'
 #' @examples
 #' \donttest{
-#' plan(callr)
+#' library(future)
+#' plan(future.callr::callr)
 #' demo("mandelbrot", package = "future", ask = FALSE)
 #' }
 #'

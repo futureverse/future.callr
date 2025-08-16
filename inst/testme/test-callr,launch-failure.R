@@ -1,4 +1,4 @@
-library(future.callr)
+library(future)
 library(listenv)
 
 options(future.debug = FALSE)
@@ -7,7 +7,7 @@ message("*** callr() ...")
 
 message("- Error in ./.Rprofile causes callr process to fail")
 
-plan(callr, workers = 2L)
+plan(future.callr::callr, workers = 2L)
 
 ## STRICTER TEST: Assert that FutureRegistry won't trigger errors
 for (kk in seq_len(nbrOfWorkers())) {

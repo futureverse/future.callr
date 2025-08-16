@@ -1,6 +1,6 @@
-library(future.callr)
+library(future)
 
-plan(callr)
+plan(future.callr::callr)
 
 message("*** Globals - manually ...")
 

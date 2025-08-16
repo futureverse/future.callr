@@ -1,10 +1,10 @@
-library(future.callr)
+library(future)
 
 options(future.debug = FALSE)
 
 message("*** RNG ...")
 
-plan(callr, workers = 2L)
+plan(future.callr::callr, workers = 2L)
 
 message("- run() does not update RNG state")
 

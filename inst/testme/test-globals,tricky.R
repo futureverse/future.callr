@@ -1,7 +1,7 @@
-library(future.callr)
+library(future)
 library(listenv)
 
-plan(callr)
+plan(future.callr::callr)
 
 message("*** Tricky use cases related to globals ...")
 

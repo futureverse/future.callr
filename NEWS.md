@@ -6,7 +6,7 @@
    longer than necessary. Such files were only removed when the future
    object itself was removed. This would result in a large number of
    temporary files accumulating where there were many futures
-   processes. Now the 'callr' backend finalizes the 'callr' process as
+   processed. Now the 'callr' backend finalizes the 'callr' process as
    soon as the future results have been collected, which results in
    removing temporary files created by **callr** sooner. Previously,
    the finalizer was only run when the future object was removed and

@@ -1,6 +1,12 @@
 # Version (development version)
 
- * ...
+## New Features
+
+ * Now the 'callr' backend finalizes the 'callr' process as soon as
+   the future results have been collected. This results in removing
+   temporary files created by **callr** sooner. Previously, the
+   finalizer was only run when the future object was removed and
+   garbage collected.
  
 
 # Version 0.10.1 [2025-07-10]

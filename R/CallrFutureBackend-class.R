@@ -456,6 +456,10 @@ await <- function(future, ...) {
       if (FutureRegistry(reg, action = "contains", future = future)) {
         FutureRegistry(reg, action = "remove", future = future)
       }
+      
+      ## Finalize the 'callr' process, which includes remove any temporary
+      ## files that it created
+      process$finalize()
     }
 
     ## Failed to launch?
@@ -526,6 +530,10 @@ await <- function(future, ...) {
   
   reg <- backend[["reg"]]
   FutureRegistry(reg, action = "remove", future = future)
+
+  ## Finalize the 'callr' process, which includes remove any temporary
+  ## files that it created
+  process$finalize()
   
   result
 } # await()

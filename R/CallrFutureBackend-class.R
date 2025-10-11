@@ -48,7 +48,11 @@ launchFuture.CallrFutureBackend <- local({
   ## MEMOIZATION
   evalFuture <- import_future("evalFuture")
   getFutureData <- import_future("getFutureData")
-  with_stealth_rng <- import_future("with_stealth_rng")
+  with_stealth_rng <- if (packageVersion("processx") >= "3.8.6") {
+    identity
+  } else {
+    import_future("with_stealth_rng")
+  }
   
   cmdargs <- NULL
 
@@ -127,7 +131,7 @@ launchFuture.CallrFutureBackend <- local({
 
     ## Launch
     ## WORKAROUND: callr::r_bg() -> ... -> processx:::get_id() updates
-    ## the RNG state
+    ## the RNG state. This was fixed in processx 3.8.6 (2025-02-21).
     with_stealth_rng({
       future[["process"]] <- r_bg(func, args = r_bg_args, stdout = stdout, stderr = stderr, cmdargs = cmdargs, supervise = supervise)
     })

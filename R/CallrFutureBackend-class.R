@@ -126,7 +126,8 @@ launchFuture.CallrFutureBackend <- local({
 
 
     ## Launch
-    ## WORKAROUND: callr::r_bg() updates the RNG state
+    ## WORKAROUND: callr::r_bg() -> ... -> processx:::get_id() updates
+    ## the RNG state
     with_stealth_rng({
       future[["process"]] <- r_bg(func, args = r_bg_args, stdout = stdout, stderr = stderr, cmdargs = cmdargs, supervise = supervise)
     })

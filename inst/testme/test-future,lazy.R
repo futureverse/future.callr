@@ -1,3 +1,4 @@
+library(future)
 library(future.callr)
 
 message("*** Futures - lazy ...")

@@ -7,8 +7,9 @@ future::plan(oplan)
 print(future::plan())
 
 
-library("future.callr")
-plan(callr)
+library(future)
+library(future.callr)
+plan(future.callr::callr)
 
 for (type in c("callr")) {
   mdebugf("*** plan('%s') ...", type)
@@ -36,7 +37,7 @@ message("*** Assert that default backend can be overridden ...")
 mpid <- Sys.getpid()
 print(mpid)
 
-plan(callr)
+plan(future.callr::callr)
 pid %<-% { Sys.getpid() }
 print(pid)
 stopifnot(pid != mpid)

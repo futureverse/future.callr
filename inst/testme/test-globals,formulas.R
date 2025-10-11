@@ -1,9 +1,9 @@
-library(future.callr)
+library(future)
 
-library("datasets") ## cars data set
-library("stats")    ## lm(), poly(), xtabs()
+library(datasets) ## cars data set
+library(stats)    ## lm(), poly(), xtabs()
 
-plan(callr)
+plan(future.callr::callr)
 
 message("*** Globals - formulas ...")
 

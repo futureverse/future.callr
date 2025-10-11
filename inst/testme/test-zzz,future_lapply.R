@@ -1,6 +1,7 @@
 #' @tags future.apply
 #' @tags listenv
 #' @tags callr
+library(future)
 library(future.callr)
 library(listenv)
 

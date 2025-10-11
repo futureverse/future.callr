@@ -1,4 +1,4 @@
-library(future.callr)
+library(future)
 
 message("*** Standard output ...")
 
@@ -13,7 +13,7 @@ truth <- paste0(paste(truth_rows, collapse = "\n"), "\n")
 print(truth)
 
 message("callr ...")
-plan(callr)
+plan(future.callr::callr)
 
 for (stdout in c(TRUE, FALSE, NA)) {
   message(sprintf("- stdout = %s", stdout))

@@ -1,5 +1,5 @@
 Package: future.callr
-Version: 0.10.1
+Version: 0.10.2
 Depends:
     R (>= 3.4.0),
     future (>= 1.58.0)
@@ -26,5 +26,5 @@ URL: https://future.callr.futureverse.org, https://github.com/futureverse/future
 BugReports: https://github.com/futureverse/future.callr/issues
 Language: en-US
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)

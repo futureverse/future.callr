@@ -1,8 +1,8 @@
-library(future.callr)
+library(future)
 
 message("*** callr() - terminating workers ...")
 
-plan(callr, workers = 2L)
+plan(future.callr::callr, workers = 2L)
 
 all <- nbrOfWorkers()
 free <- nbrOfFreeWorkers()

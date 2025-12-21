@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">future.callr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2-9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,13 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="version-development-version">Version (development version)<a class="anchor" aria-label="anchor" href="#version-development-version"></a></h2>
+<div class="section level3">
+<h3 id="deprecated-and-defunct-development-version">Deprecated and Defunct<a class="anchor" aria-label="anchor" href="#deprecated-and-defunct-development-version"></a></h3>
+<ul><li>Remove unused <code>CallrFutureError()</code>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.2" id="version-0102">Version 0.10.2<a class="anchor" aria-label="anchor" href="#version-0102"></a></h2><p class="text-muted">CRAN release: 2025-10-11</p>
 <div class="section level3">
 <h3 id="bug-fixes-0-10-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-10-2"></a></h3>
@@ -120,7 +127,7 @@
 <h2 class="pkg-version" data-toc-text="0.7.0" id="version-070">Version 0.7.0<a class="anchor" aria-label="anchor" href="#version-070"></a></h2><p class="text-muted">CRAN release: 2021-11-21</p>
 <div class="section level3">
 <h3 id="new-features-0-7-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-7-0"></a></h3>
-<ul><li><p>Add option to configure <strong>callr</strong> futures to be “supervised” by the <strong>callr</strong> package when setting up the plan, i.e. <code>plan(callr, supervise = TRUE)</code>.</p></li>
+<ul><li><p>Add option to configure <strong>callr</strong> futures to be “supervised” by the <strong>callr</strong> package when setting up the plan, i.e. <code>plan(callr,    supervise = TRUE)</code>.</p></li>
 <li><p>Now callr-specific orchestration errors are of class <code>CallrFutureError</code>, which provides information also on the future that failed.</p></li>
 </ul></div>
 </div>
@@ -185,7 +192,7 @@
 <h2 class="pkg-version" data-toc-text="0.3.0" id="version-030">Version 0.3.0<a class="anchor" aria-label="anchor" href="#version-030"></a></h2><p class="text-muted">CRAN release: 2018-05-03</p>
 <div class="section level3">
 <h3 id="new-features-0-3-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
-<ul><li><p>Argument <code>workers</code> of future strategies may now also be a function, which is called without argument when the future strategy is set up and used as is. For instance, <code>plan(callr, workers = halfCores)</code> where <code>halfCores &lt;- function() { max(1, round(availableCores() / 2)) }</code> will use half of the number of available cores. This is useful when using nested future strategies with remote machines.</p></li>
+<ul><li><p>Argument <code>workers</code> of future strategies may now also be a function, which is called without argument when the future strategy is set up and used as is. For instance, <code>plan(callr, workers = halfCores)</code> where <code>halfCores &lt;- function() { max(1, round(availableCores() /    2)) }</code> will use half of the number of available cores. This is useful when using nested future strategies with remote machines.</p></li>
 <li><p>Gathering of results from background processes is made a little bit more robust against slow file systems by retrying a few times before accepting an error as an error.</p></li>
 </ul></div>
 <div class="section level3">
@@ -219,7 +226,7 @@
 <h2 class="pkg-version" data-toc-text="0.1.0" id="version-010">Version 0.1.0<a class="anchor" aria-label="anchor" href="#version-010"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-0"></a></h3>
-<ul><li>Added ‘callr’ futures. Use <code>plan(callr)</code> or <code>plan(callr, workers = 4L)</code>.</li>
+<ul><li>Added ‘callr’ futures. Use <code>plan(callr)</code> or <code>plan(callr, workers =    4L)</code>.</li>
 </ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -231,7 +238,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3</p> and <a href="https://github.com/HenrikBengtsson/pkgdown.extras/">pkgdown.extras</a> 0.0.0.9007.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0</p> and <a href="https://github.com/HenrikBengtsson/pkgdown.extras/">pkgdown.extras</a> 0.0.0.9007.</p>
 </div>
 
     </footer></div>

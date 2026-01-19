@@ -232,7 +232,7 @@ getFutureBackendConfigs.CallrFuture <- local({
 
 #' Prints a callr future
 #'
-#' @param x An CallrFuture object
+#' @param x A CallrFuture object
 #' 
 #' @param \ldots Not used.
 #'
@@ -421,7 +421,7 @@ await <- function(future, ...) {
     mdebug_pop()
   }
 
-  ## callr:::get_result() assert that "result" and "error" files exist
+  ## callr:::get_result() asserts that "result" and "error" files exist
   ## based on file.exist().  In case there is a delay in the file system
   ## we might get a false-positive error:
   ## "Error: callr failed, could not start R, or it has crashed or was killed"

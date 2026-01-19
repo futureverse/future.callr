@@ -69,7 +69,7 @@ background R worker sessions that serve multiple futures over their
 life spans.  The advantage of using a new R process for each future is
 that the R environment is guaranteed not to be contaminated by
 previous futures, e.g. memory allocations, finalizers, modified
-options, and loaded and attached packages.  The disadvantage, is an
+options, and loaded and attached packages.  The disadvantage is an
 added overhead of launching a new R process.  (At the moment, I am
 neither aware of formal benchmarking of this extra overhead nor of
 performance comparisons of `callr` to alternative future backends.)
@@ -97,7 +97,7 @@ used simultaneously.
 
 ### No ports are used - no port clashes or firewall issues
 
-A third advantage with `callr` futures, is that there is not risk for
+A third advantage with `callr` futures is that there is no risk of
 port-clashing with other processes on the system when clusters are set
 up (*), because **callr** does not rely on ports.  Furthermore, on
 Windows, the firewall triggers an alert that the user needs to approve

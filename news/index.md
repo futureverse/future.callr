@@ -47,8 +47,9 @@ CRAN release: 2025-06-05
   [`reset()`](https://future.futureverse.org/reference/reset.html) and
   thereafter relaunched, possibly on another future backend.
 
-- A future that failed due to the ‘callr’ worker process was terminated
-  is now considered interrupted, which for instance means that it can be
+- A future that failed due to the ‘callr’ worker process being
+  terminated is now considered interrupted, which for instance means
+  that it can be
   [`reset()`](https://future.futureverse.org/reference/reset.html).
 
 - Now ‘callr’ futures relay `immediateCondition`:s in near real-time,
@@ -77,7 +78,7 @@ CRAN release: 2022-12-14
   same random numbers as other future backends. Now
   [`run()`](https://future.futureverse.org/reference/run.html) launches
   the future in stealth RNG mode, i.e. gives `r_bg()` a semi-random
-  initial seed to work with (by removing `.Random.seed`) and then undo
+  initial seed to work with (by removing `.Random.seed`) and then undoes
   the RNG state at the very end.
 
 ## Version 0.8.0

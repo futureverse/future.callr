@@ -34,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="index.html">future.callr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2-9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2-9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -138,7 +138,7 @@
 <div class="section level3">
 <h3 id="each-callr-future-uses-a-fresh-r-session">Each callr future uses a fresh R session<a class="anchor" aria-label="anchor" href="#each-callr-future-uses-a-fresh-r-session"></a>
 </h3>
-<p>When using <code>callr</code> futures, each future is resolved in a fresh background R session which ends as soon as the value of the future has been collected. In contrast, <code>multisession</code> futures are resolved in background R worker sessions that serve multiple futures over their life spans. The advantage of using a new R process for each future is that the R environment is guaranteed not to be contaminated by previous futures, e.g. memory allocations, finalizers, modified options, and loaded and attached packages. The disadvantage, is an added overhead of launching a new R process. (At the moment, I am neither aware of formal benchmarking of this extra overhead nor of performance comparisons of <code>callr</code> to alternative future backends.)</p>
+<p>When using <code>callr</code> futures, each future is resolved in a fresh background R session which ends as soon as the value of the future has been collected. In contrast, <code>multisession</code> futures are resolved in background R worker sessions that serve multiple futures over their life spans. The advantage of using a new R process for each future is that the R environment is guaranteed not to be contaminated by previous futures, e.g. memory allocations, finalizers, modified options, and loaded and attached packages. The disadvantage is an added overhead of launching a new R process. (At the moment, I am neither aware of formal benchmarking of this extra overhead nor of performance comparisons of <code>callr</code> to alternative future backends.)</p>
 </div>
 <div class="section level3">
 <h3 id="more-than-125-parallel-callr-futures">More than 125 parallel callr futures<a class="anchor" aria-label="anchor" href="#more-than-125-parallel-callr-futures"></a>
@@ -148,7 +148,7 @@
 <div class="section level3">
 <h3 id="no-ports-are-used---no-port-clashes-or-firewall-issues">No ports are used - no port clashes or firewall issues<a class="anchor" aria-label="anchor" href="#no-ports-are-used---no-port-clashes-or-firewall-issues"></a>
 </h3>
-<p>A third advantage with <code>callr</code> futures, is that there is not risk for port-clashing with other processes on the system when clusters are set up (*), because <strong>callr</strong> does not rely on ports. Furthermore, on Windows, the firewall triggers an alert that the user needs to approve whenever a not-previously-approved port is requested by R - which happens also for local, non-public ports (StackOverflow Question #47353848) that are used by <code>SOCKcluster</code>:s. When using <code>callr</code> futures, no sockets and therefore no ports are involved.</p>
+<p>A third advantage with <code>callr</code> futures is that there is no risk of port-clashing with other processes on the system when clusters are set up (*), because <strong>callr</strong> does not rely on ports. Furthermore, on Windows, the firewall triggers an alert that the user needs to approve whenever a not-previously-approved port is requested by R - which happens also for local, non-public ports (StackOverflow Question #47353848) that are used by <code>SOCKcluster</code>:s. When using <code>callr</code> futures, no sockets and therefore no ports are involved.</p>
 <p>(*) To lower the risk for such clashes <code>SOCKcluster</code>:s (of the <strong>parallel</strong> package) request random ports, but clashes still occur at times.</p>
 </div>
 </div>

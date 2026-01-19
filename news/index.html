@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">future.callr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2-9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2-9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,7 @@
 <div class="section level3">
 <h3 id="new-features-0-10-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-10-0"></a></h3>
 <ul><li><p>Now ‘callr’ futures can be canceled using <code><a href="https://future.futureverse.org/reference/cancel.html" class="external-link">cancel()</a></code>, which also interrupts them by default, which in turn frees up compute resources sooner. Map-reduce API such as <strong>future.apply</strong>, <strong>doFuture</strong>, and <strong>furrr</strong> can take advantage of this by canceling all non-resolved futures whenever they detect an error in one of the futures. Also, canceled futures can be <code><a href="https://future.futureverse.org/reference/reset.html" class="external-link">reset()</a></code> and thereafter relaunched, possibly on another future backend.</p></li>
-<li><p>A future that failed due to the ‘callr’ worker process was terminated is now considered interrupted, which for instance means that it can be <code><a href="https://future.futureverse.org/reference/reset.html" class="external-link">reset()</a></code>.</p></li>
+<li><p>A future that failed due to the ‘callr’ worker process being terminated is now considered interrupted, which for instance means that it can be <code><a href="https://future.futureverse.org/reference/reset.html" class="external-link">reset()</a></code>.</p></li>
 <li><p>Now ‘callr’ futures relay <code>immediateCondition</code>:s in near real-time, e.g. <code>progression</code> conditions signals by the <strong>progressr</strong> package.</p></li>
 </ul></div>
 </div>
@@ -112,7 +112,7 @@
 <div class="section level3">
 <h3 id="bug-fixes-0-8-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-1"></a></h3>
 <ul><li>
-<code><a href="https://future.futureverse.org/reference/run.html" class="external-link">run()</a></code> for <code>CallrFuture</code> would update the RNG state, because <code><a href="https://callr.r-lib.org/reference/r_bg.html" class="external-link">callr::r_bg()</a></code>, used to launch the future, does so. This would compromise numeric reproducibility, where the <code>callr</code> future backend would not give the same random numbers as other future backends. Now <code><a href="https://future.futureverse.org/reference/run.html" class="external-link">run()</a></code> launches the future in stealth RNG mode, i.e. gives <code>r_bg()</code> a semi-random initial seed to work with (by removing <code>.Random.seed</code>) and then undo the RNG state at the very end.</li>
+<code><a href="https://future.futureverse.org/reference/run.html" class="external-link">run()</a></code> for <code>CallrFuture</code> would update the RNG state, because <code><a href="https://callr.r-lib.org/reference/r_bg.html" class="external-link">callr::r_bg()</a></code>, used to launch the future, does so. This would compromise numeric reproducibility, where the <code>callr</code> future backend would not give the same random numbers as other future backends. Now <code><a href="https://future.futureverse.org/reference/run.html" class="external-link">run()</a></code> launches the future in stealth RNG mode, i.e. gives <code>r_bg()</code> a semi-random initial seed to work with (by removing <code>.Random.seed</code>) and then undoes the RNG state at the very end.</li>
 </ul></div>
 </div>
     <div class="section level2">

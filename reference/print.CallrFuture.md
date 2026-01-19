@@ -13,7 +13,7 @@ print(x, ...)
 
 - x:
 
-  An CallrFuture object
+  A CallrFuture object
 
 - ...:
 

@@ -26,7 +26,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/future.callr.html">A Future for callr</a></li>
   </ul></li>
-<li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="active nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://www.futureverse.org/"><span class="fa fas fa-home"></span></a></li>
@@ -44,6 +44,7 @@
     <li><a class="external-link dropdown-item" href="https://globals.futureverse.org">globals</a></li>
     <li><a class="external-link dropdown-item" href="https://listenv.futureverse.org">listenv</a></li>
     <li><a class="external-link dropdown-item" href="https://parallelly.futureverse.org">parallelly</a></li>
+    <li><a class="external-link dropdown-item" href="https://progressify.futureverse.org">progressify</a></li>
     <li><a class="external-link dropdown-item" href="https://progressr.futureverse.org">progressr</a></li>
     <li><a class="external-link dropdown-item" href="https://future.p2p.futureverse.org">future.p2p (experimental)</a></li>
     <li><a class="external-link dropdown-item" href="https://future.tools.futureverse.org">future.tools (experimental)</a></li>
@@ -127,7 +128,7 @@
 <h2 class="pkg-version" data-toc-text="0.7.0" id="version-070">Version 0.7.0<a class="anchor" aria-label="anchor" href="#version-070"></a></h2><p class="text-muted">CRAN release: 2021-11-21</p>
 <div class="section level3">
 <h3 id="new-features-0-7-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-7-0"></a></h3>
-<ul><li><p>Add option to configure <strong>callr</strong> futures to be “supervised” by the <strong>callr</strong> package when setting up the plan, i.e. <code>plan(callr,    supervise = TRUE)</code>.</p></li>
+<ul><li><p>Add option to configure <strong>callr</strong> futures to be “supervised” by the <strong>callr</strong> package when setting up the plan, i.e. <code>plan(callr, supervise = TRUE)</code>.</p></li>
 <li><p>Now callr-specific orchestration errors are of class <code>CallrFutureError</code>, which provides information also on the future that failed.</p></li>
 </ul></div>
 </div>
@@ -192,7 +193,7 @@
 <h2 class="pkg-version" data-toc-text="0.3.0" id="version-030">Version 0.3.0<a class="anchor" aria-label="anchor" href="#version-030"></a></h2><p class="text-muted">CRAN release: 2018-05-03</p>
 <div class="section level3">
 <h3 id="new-features-0-3-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
-<ul><li><p>Argument <code>workers</code> of future strategies may now also be a function, which is called without argument when the future strategy is set up and used as is. For instance, <code>plan(callr, workers = halfCores)</code> where <code>halfCores &lt;- function() { max(1, round(availableCores() /    2)) }</code> will use half of the number of available cores. This is useful when using nested future strategies with remote machines.</p></li>
+<ul><li><p>Argument <code>workers</code> of future strategies may now also be a function, which is called without argument when the future strategy is set up and used as is. For instance, <code>plan(callr, workers = halfCores)</code> where <code>halfCores &lt;- function() { max(1, round(availableCores() / 2)) }</code> will use half of the number of available cores. This is useful when using nested future strategies with remote machines.</p></li>
 <li><p>Gathering of results from background processes is made a little bit more robust against slow file systems by retrying a few times before accepting an error as an error.</p></li>
 </ul></div>
 <div class="section level3">
@@ -226,7 +227,7 @@
 <h2 class="pkg-version" data-toc-text="0.1.0" id="version-010">Version 0.1.0<a class="anchor" aria-label="anchor" href="#version-010"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-0"></a></h3>
-<ul><li>Added ‘callr’ futures. Use <code>plan(callr)</code> or <code>plan(callr, workers =    4L)</code>.</li>
+<ul><li>Added ‘callr’ futures. Use <code>plan(callr)</code> or <code>plan(callr, workers = 4L)</code>.</li>
 </ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

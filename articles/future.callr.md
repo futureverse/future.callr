@@ -40,9 +40,9 @@ as those of
 The **future.callr** package implements a **future** backend wrapper for
 **callr**.
 
-| Backend | Description                                                      | Alternative in future package |
-|:--------|:-----------------------------------------------------------------|:------------------------------|
-| `callr` | parallel evaluation in a separate R process (on current machine) | `plan(multisession)`          |
+| Backend | Description | Alternative in future package |
+|:---|:---|:---|
+| `callr` | parallel evaluation in a separate R process (on current machine) | `plan(multisession)` |
 
 ### Each callr future uses a fresh R session
 
@@ -100,6 +100,7 @@ used. *The user has full control of how futures are evaluated*. For
 instance, to use `callr` futures, run the demo as:
 
 ``` r
+
 library(future)
 plan(future.callr::callr)
 demo("mandelbrot", package = "future", ask = FALSE)

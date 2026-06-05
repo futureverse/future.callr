@@ -2,9 +2,15 @@
 
 ## Version (development version)
 
+### Significant Changes
+
+- Changed the package license to Apache License (\>= 2).
+
 ### Deprecated and Defunct
 
 - Remove unused `CallrFutureError()`.
+
+- Adjust internal code on how to best cleanup **callr** processes.
 
 ## Version 0.10.2
 

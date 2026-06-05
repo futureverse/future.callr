@@ -8,7 +8,7 @@
 
  * Remove unused `CallrFutureError()`.
  
- * Adjust internal code on how to best cleanup **callr** processes.
+ * Adjust internal code on how to best clean up **callr** processes.
 
 
 # Version 0.10.2 [2025-10-10]

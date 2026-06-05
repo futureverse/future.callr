@@ -1,5 +1,9 @@
 # Version (development version)
 
+## Significant Changes
+
+ * Changed the package license to Apache License (>= 2).
+ 
 ## Deprecated and Defunct
 
  * Remove unused `CallrFutureError()`.

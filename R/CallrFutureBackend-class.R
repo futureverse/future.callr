@@ -464,7 +464,11 @@ await <- function(future, ...) {
       
       ## Finalize the 'callr' process, which includes remove any temporary
       ## files that it created
-      process$finalize()
+      if (is.function(process$cleanup)) {
+        process$cleanup()
+      } else {
+        process$finalize()
+      }
     }
 
     ## Failed to launch?
@@ -538,8 +542,12 @@ await <- function(future, ...) {
 
   ## Finalize the 'callr' process, which includes remove any temporary
   ## files that it created
-  process$finalize()
-  
+  if (is.function(process$cleanup)) {
+    process$cleanup()
+  } else {
+    process$finalize()
+  }
+
   result
 } # await()
 

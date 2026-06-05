@@ -3,6 +3,8 @@
 ## Deprecated and Defunct
 
  * Remove unused `CallrFutureError()`.
+ 
+ * Adjust internal code on how to best cleanup **callr** processes.
 
 
 # Version 0.10.2 [2025-10-10]

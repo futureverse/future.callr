@@ -2,7 +2,7 @@
 
 ## Significant Changes
 
- * Changed the package license to Apache License (>= 2).
+ * Changed the package license to permissive Apache License (>= 2).
  
 ## Deprecated and Defunct
 

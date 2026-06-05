@@ -12,7 +12,7 @@ backend may use at any time.}
 
 \item{supervise}{(optional) Argument passed to \code{\link[callr:r_bg]{callr::r_bg()}}.}
 
-\item{\ldots}{Additional arguments passed to \code{\link[future:FutureBackend-class]{future::FutureBackend()}}.}
+\item{\ldots}{Additional arguments passed to \code{\link[future:FutureBackend]{future::FutureBackend()}}.}
 }
 \value{
 A CallrFutureBackend object

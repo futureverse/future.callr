@@ -1,10 +1,13 @@
-# Version (development version)
+# Version 1.0.0 [2026-06-22]
 
 ## Significant Changes
 
  * Changed the package license to permissive Apache License (>= 2).
  
 ## Deprecated and Defunct
+
+ * Use `r_process$cleanup()` instead of `r_process$finalize()` to
+   align with **callr** updates.
 
  * Remove unused `CallrFutureError()`.
  

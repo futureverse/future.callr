@@ -7,7 +7,7 @@
 \method{print}{CallrFuture}(x, ...)
 }
 \arguments{
-\item{x}{An CallrFuture object}
+\item{x}{A CallrFuture object}
 
 \item{\ldots}{Not used.}
 }

@@ -1,3 +1,19 @@
+# Version 1.0.0 [2026-06-22]
+
+## Significant Changes
+
+ * Changed the package license to permissive Apache License (>= 2).
+ 
+## Deprecated and Defunct
+
+ * Use `r_process$cleanup()` instead of `r_process$finalize()` to
+   align with **callr** updates.
+
+ * Remove unused `CallrFutureError()`.
+ 
+ * Adjust internal code on how to best clean up **callr** processes.
+
+
 # Version 0.10.2 [2025-10-10]
 
 ## Bug Fixes
@@ -34,7 +50,7 @@
    in one of the futures. Also, canceled futures can be `reset()` 
    and thereafter relaunched, possibly on another future backend.
 
- * A future that failed due to the 'callr' worker process was
+ * A future that failed due to the 'callr' worker process being
    terminated is now considered interrupted, which for instance means
    that it can be `reset()`.
 
@@ -60,7 +76,7 @@
    backend would not give the same random numbers as other future
    backends.  Now `run()` launches the future in stealth RNG mode,
    i.e. gives `r_bg()` a semi-random initial seed to work with (by
-   removing `.Random.seed`) and then undo the RNG state at the very
+   removing `.Random.seed`) and then undoes the RNG state at the very
    end.
  
 

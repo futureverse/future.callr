@@ -1,4 +1,5 @@
-on: [push]
+on:
+  workflow_dispatch:  # Enables manual triggering
 
 name: test-coverage.yaml
 
@@ -26,13 +27,10 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            any::covr
-            any::xml2
-            any::remotes
+          extra-packages: any::covr, any::xml2
           needs: coverage
 
-      - name: Install package itself (special case)
+      - name: Install itself
         run: |
           install.packages(".", repos = NULL, type = "source")
         shell: Rscript {0}

@@ -6,8 +6,7 @@
 
 - Launching too many callr futures without removing them after they’ve
   been resolved could result in errors on “processx socketpair (system
-  error 24, Too many open files)
-  [@unix](https://github.com/unix)/processx.c:433
+  error 24, Too many open files) unix/processx.c:433
   (processx\_\_make_socketpair)”.
 
 ## Version 1.0.0

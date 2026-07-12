@@ -469,6 +469,11 @@ await <- function(future, ...) {
       } else {
         process$finalize()
       }
+
+      ## Close any open connections to release file descriptors immediately
+      ## and avoid running out of file descriptors (system error 24)
+      ## See also https://github.com/r-lib/callr/issues/320
+      close_process_connections(process)
     }
 
     ## Failed to launch?
@@ -547,6 +552,10 @@ await <- function(future, ...) {
   } else {
     process$finalize()
   }
+
+  ## Close any open connections to release file descriptors immediately
+  ## and avoid running out of file descriptors (system error 24)
+  close_process_connections(process)
 
   result
 } # await()
@@ -654,3 +663,18 @@ class(callr) <- c("callr", "multiprocess", "future", "function")
 attr(callr, "init") <- TRUE
 attr(callr, "tweakable") <- "supervise"
 attr(callr, "factory") <- CallrFutureBackend
+
+close_process_connections <- function(process) {
+  if (inherits(process, "process")) {
+    for (conn_name in c("input", "output", "error", "poll")) {
+      has_conn_fn <- process[[sprintf("has_%s_connection", conn_name)]]
+      get_conn_fn <- process[[sprintf("get_%s_connection", conn_name)]]
+      if (is.function(has_conn_fn) && has_conn_fn() && is.function(get_conn_fn)) {
+        con <- get_conn_fn()
+        if (inherits(con, "processx_connection")) {
+          tryCatch(close(con), error = identity)
+        }
+      }
+    }
+  }
+}

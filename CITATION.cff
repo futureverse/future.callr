@@ -1,0 +1,47 @@
+# ------------------------------------------------
+# CITATION.cff file created with {cffr} R package
+# See also: https://docs.ropensci.org/cffr/
+# ------------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "future.callr" in publications use:'
+type: software
+license: Apache-2.0
+title: 'future.callr: A Future API for Parallel Processing using ''callr'''
+doi: 10.32614/CRAN.package.future.callr
+abstract: Implementation of the Future API <https://doi.org/10.32614/RJ-2021-048>
+  on top of the 'callr' package. This allows you to process futures, as defined by
+  the 'future' package, in parallel out of the box, on your local (Linux, macOS, Windows,
+  ...) machine. Contrary to backends relying on the 'parallel' package (e.g. 'future::multisession')
+  and socket connections, the 'callr' backend provided here can run more than 125
+  parallel R processes.
+authors:
+- family-names: Bengtsson
+  given-names: Henrik
+  email: henrikb@braju.com
+  orcid: https://orcid.org/0000-0002-7579-5165
+preferred-citation:
+  type: article
+  title: A Unifying Framework for Parallel and Distributed Processing in R using Futures
+  authors:
+  - family-names: Bengtsson
+    given-names: Henrik
+    email: henrikb@braju.com
+    orcid: https://orcid.org/0000-0002-7579-5165
+  year: '2021'
+  journal: The R Journal
+  doi: 10.32614/RJ-2021-048
+  url: https://doi.org/10.32614/RJ-2021-048
+  volume: '13'
+  issue: '2'
+  start: '208'
+  end: '227'
+repository: https://CRAN.R-project.org/package=future.callr
+repository-code: https://github.com/futureverse/future.callr
+url: https://future.callr.futureverse.org
+contact:
+- family-names: Bengtsson
+  given-names: Henrik
+  email: henrikb@braju.com
+  orcid: https://orcid.org/0000-0002-7579-5165
+

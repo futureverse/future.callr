@@ -12,3 +12,4 @@
 ^Makefile$
 Rplots.pdf$
 ^.*[.]tar[.]gz$
+^CITATION\.cff$

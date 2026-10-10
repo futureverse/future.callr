@@ -46,3 +46,9 @@ evaluated in a background R session.
 
 callr futures rely on the callr package, which is supported on all
 operating systems.
+
+Unlike other future backends, callr futures explicitly discard the
+standard error (stderr) produced while evaluating the future. This is by
+design in order to avoid 'callr'/'processx' processes from stalling.
+Note that messages, warnings, and other conditions are still captured
+and relayed as usual.

@@ -99,9 +99,7 @@ planes. The demo does not assume anything about what type of futures are
 used. *The user has full control of how futures are evaluated*. For
 instance, to use `callr` futures, run the demo as:
 
-``` r
-
-library(future)
-plan(future.callr::callr)
-demo("mandelbrot", package = "future", ask = FALSE)
-```
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`future`](https://future.futureverse.org)`)`\
+[`plan`](https://future.futureverse.org/reference/plan.html)`(``future.callr``::`[`callr`](https://future.callr.futureverse.org/reference/callr.md)`)`\
+[`demo`](https://rdrr.io/r/utils/demo.html)`(``"mandelbrot"``, package ``=`` ``"future"``, ask ``=`` ``FALSE``)`

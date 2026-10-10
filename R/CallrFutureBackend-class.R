@@ -88,9 +88,15 @@ launchFuture.CallrFutureBackend <- local({
     globals <- future[["globals"]]
     
     ## Make a callr::r_bg()-compatible function
-    func <- function(data) { future:::evalFuture(data) }
+    ## 
+    ## WORKAROUND:
+    ## callr::r_bg() embeds the full 'future' content in the call stack of
+    ## the future evaluation environment. There is no way to disable this.
+    ## We can hide the future content from the call stack by passing it to
+    ## the callr workers by wrapping it in an environment. /HB 2026-10-10
+    func <- function(data_env) { future:::evalFuture(data_env[["data"]]) }
     data <- getFutureData(future, mc.cores = 1L)
-    r_bg_args <- list(data)
+    r_bg_args <- list(list2env(list(data = data), parent = emptyenv()))
 
     ## 0. Record backend for now
     future[["backend"]] <- backend

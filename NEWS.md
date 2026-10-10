@@ -12,6 +12,10 @@
    socketpair (system error 24, Too many open files)
    unix/processx.c:433 (processx\_\_make\_socketpair)".
 
+ * The `sys.calls()` stack it a 'callr' worker would carry the full
+   future content, which would result in a deparsed call stacks to be
+   unnecessarily large.
+
 
 # Version 1.0.0 [2026-06-22]
 

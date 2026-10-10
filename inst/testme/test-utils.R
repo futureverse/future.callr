@@ -12,6 +12,18 @@ stopifnot(is_false(FALSE), !is_false(TRUE), !is_false(NA), !is_false(1),
           !is_false(NULL), !is_false(1:2), !is_false(rep(FALSE, times = 3)),
           !is_false(rep(TRUE, times = 3)), !is_false(letters))
 
+message("- stop_if_not() ...")
+stop_if_not <- future.callr:::stop_if_not
+stopifnot(is.null(stop_if_not(TRUE, 1 == 1)))
+res <- tryCatch(stop_if_not(1 == 2), error = identity)
+stopifnot(inherits(res, "error"))
+## A call that deparses to more than one line (width.cutoff = 60L)
+res <- tryCatch(
+  stop_if_not(nchar("a") == 1 && nchar("a") == 1 && nchar("a") == 1 && nchar("a") == 1 && nchar("a") == 2),
+  error = identity
+)
+stopifnot(inherits(res, "error"))
+
 message("- hpaste() & printf() ...")
 # Some vectors
 x <- 1:6
@@ -50,6 +62,12 @@ printf("y = %s.\n", paste(y, collapse = ", "))
 # Change last separator
 printf("x = %s.\n", hpaste(x, last_collapse = " and "))
 ## x = 1, 2, 3, 4, 5 and 6.
+
+# Empty vector
+stopifnot(identical(hpaste(character(0L)), character(0L)))
+
+# Turning off collapsing altogether
+stopifnot(identical(hpaste(x, collapse = NULL), as.character(x)))
 
 message("- mdebug(), mdebugf() and mstr() ...")
 mdebug("Hello world!")

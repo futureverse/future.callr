@@ -1,5 +1,10 @@
 # Version (development version)
 
+## Documentation
+
+ * Clarify in `help("callr")` that callr futures always discard
+   standard error (stderr).
+
 ## Bug Fixes
 
  * Launching too many callr futures without removing them after

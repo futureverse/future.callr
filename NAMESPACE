@@ -12,24 +12,30 @@ S3method(stopWorkers,CallrFutureBackend)
 export(CallrFutureBackend)
 export(callr)
 importFrom(callr,r_bg)
-importFrom(future,FutureBackend)
-importFrom(future,FutureError)
-importFrom(future,FutureInterruptError)
-importFrom(future,FutureWarning)
-importFrom(future,UnexpectedFutureResultError)
-importFrom(future,cancel)
-importFrom(future,future)
-importFrom(future,interruptFuture)
-importFrom(future,launchFuture)
-importFrom(future,nbrOfFreeWorkers)
-importFrom(future,nbrOfWorkers)
-importFrom(future,resolved)
-importFrom(future,result)
-importFrom(future,run)
-importFrom(future,stopWorkers)
-importFrom(parallelly,availableCores)
-importFrom(parallelly,killNode)
-importFrom(utils,capture.output)
-importFrom(utils,packageVersion)
-importFrom(utils,str)
-importFrom(utils,tail)
+importFrom(future,
+  FutureBackend,
+  FutureError,
+  FutureInterruptError,
+  FutureWarning,
+  UnexpectedFutureResultError,
+  cancel,
+  future,
+  interruptFuture,
+  launchFuture,
+  nbrOfFreeWorkers,
+  nbrOfWorkers,
+  resolved,
+  result,
+  run,
+  stopWorkers
+)
+importFrom(parallelly,
+  availableCores,
+  killNode
+)
+importFrom(utils,
+  capture.output,
+  packageVersion,
+  str,
+  tail
+)

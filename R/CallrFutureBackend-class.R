@@ -88,9 +88,15 @@ launchFuture.CallrFutureBackend <- local({
     globals <- future[["globals"]]
     
     ## Make a callr::r_bg()-compatible function
-    func <- function(data) { future:::evalFuture(data) }
+    ## 
+    ## WORKAROUND:
+    ## callr::r_bg() embeds the full 'future' content in the call stack of
+    ## the future evaluation environment. There is no way to disable this.
+    ## We can hide the future content from the call stack by passing it to
+    ## the callr workers by wrapping it in an environment. /HB 2026-10-10
+    func <- function(data_env) { future:::evalFuture(data_env[["data"]]) }
     data <- getFutureData(future, mc.cores = 1L)
-    r_bg_args <- list(data)
+    r_bg_args <- list(list2env(list(data = data), parent = emptyenv()))
 
     ## 0. Record backend for now
     future[["backend"]] <- backend
@@ -469,6 +475,11 @@ await <- function(future, ...) {
       } else {
         process$finalize()
       }
+
+      ## Close any open connections to release file descriptors immediately
+      ## and avoid running out of file descriptors (system error 24)
+      ## See also https://github.com/r-lib/callr/issues/320
+      close_process_connections(process)
     }
 
     ## Failed to launch?
@@ -547,6 +558,10 @@ await <- function(future, ...) {
   } else {
     process$finalize()
   }
+
+  ## Close any open connections to release file descriptors immediately
+  ## and avoid running out of file descriptors (system error 24)
+  close_process_connections(process)
 
   result
 } # await()
@@ -644,6 +659,12 @@ interruptFuture.CallrFutureBackend <- function(backend, future, ...) {
 #' callr futures rely on the \pkg{callr} package, which is supported
 #' on all operating systems.
 #'
+#' Unlike other future backends, callr futures explicitly discard the
+#' standard error (stderr) produced while evaluating the future. This is
+#' by design in order to avoid 'callr'/'processx' processes from stalling. 
+#' Note that messages, warnings, and other conditions are still captured
+#' and relayed as usual.
+#'
 #' @importFrom parallelly availableCores
 #' @importFrom future future
 #' @export
@@ -654,3 +675,18 @@ class(callr) <- c("callr", "multiprocess", "future", "function")
 attr(callr, "init") <- TRUE
 attr(callr, "tweakable") <- "supervise"
 attr(callr, "factory") <- CallrFutureBackend
+
+close_process_connections <- function(process) {
+  if (inherits(process, "process")) {
+    for (conn_name in c("input", "output", "error", "poll")) {
+      has_conn_fn <- process[[sprintf("has_%s_connection", conn_name)]]
+      get_conn_fn <- process[[sprintf("get_%s_connection", conn_name)]]
+      if (is.function(has_conn_fn) && has_conn_fn() && is.function(get_conn_fn)) {
+        con <- get_conn_fn()
+        if (inherits(con, "processx_connection")) {
+          tryCatch(close(con), error = identity)
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,22 @@
+# Version 1.0.1 [2026-10-11]
+
+## Documentation
+
+ * Clarify in `help("callr")` that callr futures always discard
+   standard error (stderr).
+
+## Bug Fixes
+
+ * Launching too many callr futures without removing them after
+   they've been resolved could result in errors on "processx
+   socketpair (system error 24, Too many open files)
+   unix/processx.c:433 (processx\_\_make\_socketpair)".
+
+ * The `sys.calls()` stack it a 'callr' worker would carry the full
+   future content, which would result in a deparsed call stacks to be
+   unnecessarily large.
+
+
 # Version 1.0.0 [2026-06-22]
 
 ## Significant Changes

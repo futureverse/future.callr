@@ -1,6 +1,6 @@
 # Changelog
 
-## Version (development version)
+## Version 1.0.1
 
 ### Documentation
 

@@ -1,6 +1,9 @@
 # Version (development version)
 
- * ...
+## Bug Fixes
+
+ * Waiting for an available worker with a timeout greater than 60
+   seconds could take much longer than that.
 
 
 # Version 1.0.1 [2026-10-11]

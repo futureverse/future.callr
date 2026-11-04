@@ -39,6 +39,7 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
 }
 
 
+#' @importFrom utils packageVersion
 #' @importFrom future run FutureError
 #' @importFrom callr r_bg
 #' @keywords internal
@@ -46,8 +47,6 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
 #' @export
 launchFuture.CallrFutureBackend <- local({
   ## MEMOIZATION
-  evalFuture <- import_future("evalFuture")
-  getFutureData <- import_future("getFutureData")
   with_stealth_rng <- if (packageVersion("processx") >= "3.8.6") {
     identity
   } else {
@@ -210,30 +209,25 @@ nbrOfFreeWorkers.CallrFutureBackend <- function(evaluator = NULL, background = F
 
 
 #' @exportS3Method getFutureBackendConfigs CallrFuture
-getFutureBackendConfigs.CallrFuture <- local({
-  immediateConditionsPath <- import_future("immediateConditionsPath")
-  fileImmediateConditionHandler <- import_future("fileImmediateConditionHandler")
-  
-  function(future, ..., debug = isTRUE(getOption("future.debug"))) {
-    conditionClasses <- future[["conditions"]]
-    if (is.null(conditionClasses)) {
-      capture <- list()
-    } else {
-      path <- immediateConditionsPath(rootPath = tempdir())
-      capture <- list(
-        immediateConditionHandlers = list(
-          immediateCondition = function(cond) {
-            fileImmediateConditionHandler(cond, path = path)
-          }
-        )
+getFutureBackendConfigs.CallrFuture <- function(future, ..., debug = isTRUE(getOption("future.debug"))) {
+  conditionClasses <- future[["conditions"]]
+  if (is.null(conditionClasses)) {
+    capture <- list()
+  } else {
+    path <- immediateConditionsPath(rootPath = tempdir())
+    capture <- list(
+      immediateConditionHandlers = list(
+        immediateCondition = function(cond) {
+          fileImmediateConditionHandler(cond, path = path)
+        }
       )
-    }
-  
-    list(
-      capture = capture
     )
   }
-})
+
+  list(
+    capture = capture
+  )
+}
 
 
 #' Prints a callr future
@@ -569,9 +563,6 @@ await <- function(future, ...) {
 
 
 post_mortem_failure <- function(reason, future) {
-  assert_no_references <- import_future("assert_no_references")
-  summarize_size_of_globals <- import_future("summarize_size_of_globals")
-
   stop_if_not(inherits(future, "Future"))
   
   ## (1) Trimmed error message

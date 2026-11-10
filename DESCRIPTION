@@ -1,5 +1,5 @@
 Package: future.callr
-Version: 1.0.1-9004
+Version: 1.0.1-9005
 Depends:
     R (>= 3.4.0),
     future (>= 1.80.0)
@@ -7,7 +7,6 @@ Imports:
     parallelly,
     callr
 Suggests:
-    globals,
     future.apply,
     listenv,
     markdown,

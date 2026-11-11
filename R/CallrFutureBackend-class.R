@@ -104,11 +104,7 @@ launchFuture.CallrFutureBackend <- local({
     workers <- backend[["workers"]]
     supervise <- backend[["supervise"]]
 
-    timeout = backend[["future.wait.timeout"]]
-    delta   = backend[["future.wait.interval"]]
-    alpha   = backend[["future.wait.alpha"]]
-
-    waitForWorker(type = "callr", workers = workers, debug = debug)
+    waitForWorker(backend, workers = workers, debug = debug)
 
     ## 2. Allocate future to worker
     reg <- backend[["reg"]]

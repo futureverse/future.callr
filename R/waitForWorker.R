@@ -1,35 +1,11 @@
-#' @importFrom future FutureError
-waitForWorker <- function(type,
-         workers,
-         await = NULL,
-         timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
-         delta = getOption("future.wait.interval", 0.2),
-         alpha = getOption("future.wait.alpha", 1.01),
-         debug = FALSE) {
-  if (debug) {
-    mdebug_push("waitForWorker() ...")
-    on.exit(mdebug_pop())
-  }
-  
-  stop_if_not(length(type) == 1, is.character(type), !is.na(type), nzchar(type))
-  stop_if_not(is.null(await) || is.function(await))
-  workers <- as.integer(workers)
-  stop_if_not(length(workers) == 1, is.finite(workers), workers >= 1L)
-  stop_if_not(length(timeout) == 1, is.finite(timeout), timeout >= 0)
-  stop_if_not(length(alpha) == 1, is.finite(alpha), alpha > 0)
-
+#' @importFrom future FutureError nbrOfWorkers
+waitForWorker <- function(backend, workers = nbrOfWorkers(backend), debug = FALSE) {
   ## FutureRegistry to use
-  reg <- sprintf("workers-%s", type)
+  reg <- backend[["reg"]]
 
-  ## Use a default await() function?
-  if (is.null(await)) {
-    await <- function() FutureRegistry(reg, action = "collect-first")
-  }  
- 
-  ## Number of occupied workers
-  usedWorkers <- function() {
-    length(FutureRegistry(reg, action = "list", earlySignal = FALSE))
-  }
+  timeout <- backend[["future.wait.timeout"]]
+  delta <- backend[["future.wait.interval"]]
+  alpha <- backend[["future.wait.alpha"]]
 
   t0 <- Sys.time()
   dt <- 0
@@ -38,7 +14,7 @@ waitForWorker <- function(type,
   finished <- FALSE
   while (dt <= timeout) {
     ## Check for available workers
-    used <- usedWorkers()
+    used <- length(FutureRegistry(reg, action = "list", earlySignal = FALSE))
     finished <- (used < workers)
     if (finished) break
 
@@ -47,9 +23,9 @@ waitForWorker <- function(type,
     ## Wait
     Sys.sleep(interval)
     interval <- alpha * interval
-    
+
     ## Finish/close workers, iff possible
-    await()
+    FutureRegistry(reg, action = "collect-first")
 
     iter <- iter + 1L
     dt <- difftime(Sys.time(), t0, units = "secs")

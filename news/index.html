@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">future.callr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1-9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1-9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,7 +75,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="version-development-version">Version (development version)<a class="anchor" aria-label="anchor" href="#version-development-version"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
-<ul><li>Waiting for an available worker with a timeout greater than 60 seconds could take much longer than that.</li>
+<ul><li><p>Waiting for an available worker with a timeout greater than 60 seconds could take much longer than that.</p></li>
+<li><p>When waiting for an available worker, the callr backend used the current values of R options <code>future.wait.timeout</code>, <code>future.wait.interval</code>, and <code>future.wait.alpha</code>, instead of the ones recorded when the backend was set up via <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan()</a></code>. Also, the fallback interval was 0.2 seconds instead of 0.01 seconds.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

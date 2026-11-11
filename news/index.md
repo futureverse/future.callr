@@ -7,6 +7,13 @@
 - Waiting for an available worker with a timeout greater than 60 seconds
   could take much longer than that.
 
+- When waiting for an available worker, the callr backend used the
+  current values of R options `future.wait.timeout`,
+  `future.wait.interval`, and `future.wait.alpha`, instead of the ones
+  recorded when the backend was set up via
+  [`plan()`](https://future.futureverse.org/reference/plan.html). Also,
+  the fallback interval was 0.2 seconds instead of 0.01 seconds.
+
 ## Version 1.0.1
 
 CRAN release: 2026-10-11

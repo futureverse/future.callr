@@ -3,9 +3,9 @@ waitForWorker <- function(backend, workers = nbrOfWorkers(backend), debug = FALS
   ## FutureRegistry to use
   reg <- backend[["reg"]]
 
-  timeout <- backend[["future.wait.timeout"]]
-  delta <- backend[["future.wait.interval"]]
-  alpha <- backend[["future.wait.alpha"]]
+  timeout <- backend[["timeout"]]
+  delta <- backend[["delta"]]
+  alpha <- backend[["alpha"]]
 
   t0 <- Sys.time()
   dt <- 0

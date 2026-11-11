@@ -28,9 +28,9 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
     reg = "workers-callr",
     workers = workers,
     supervise = supervise,
-    future.wait.timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
-    future.wait.interval = getOption("future.wait.interval", 0.01),
-    future.wait.alpha = getOption("future.wait.alpha", 1.01),
+    timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
+    delta = getOption("future.wait.interval", 0.01),
+    alpha = getOption("future.wait.alpha", 1.01),
     ...
   )
   core[["futureClasses"]] <- c("CallrFuture", core[["futureClasses"]])
@@ -361,9 +361,9 @@ result.CallrFuture <- function(future, ...) {
 #' @importFrom future FutureError FutureWarning FutureInterruptError
 await <- function(future, ...) {
   backend <- future[["backend"]]
-  timeout <- backend[["future.wait.timeout"]]
-  delta <- backend[["future.wait.interval"]]
-  alpha <- backend[["future.wait.alpha"]]
+  timeout <- backend[["timeout"]]
+  delta <- backend[["delta"]]
+  alpha <- backend[["alpha"]]
 
   stop_if_not(is.finite(timeout), timeout >= 0)
   stop_if_not(is.finite(alpha), alpha > 0)

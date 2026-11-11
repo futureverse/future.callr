@@ -34,7 +34,7 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
     ...
   )
   core[["futureClasses"]] <- c("CallrFuture", core[["futureClasses"]])
-  core <- structure(core, class = c("CallrFutureBackend", "MultiprocessFutureBackend", "FutureBackend", class(core)))
+  core <- structure(core, class = c("CallrFutureBackend", "MultiprocessFutureBackend", class(core)))
   core
 }
 

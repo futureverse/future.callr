@@ -17,15 +17,14 @@ provides a type of futures that utilizes the
 
 For example,
 
-``` r
-> library(future)
-> plan(future.callr::callr)
->
-> x %<-% { Sys.sleep(5); 3.14 }
-> y %<-% { Sys.sleep(5); 2.71 }
-> x + y
-[1] 5.85
-```
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`future`](https://future.futureverse.org)`)`\
+[`plan`](https://future.futureverse.org/reference/plan.html)`(``future.callr``::`[`callr`](https://future.callr.futureverse.org/reference/callr.md)`)`\
+\
+`x`` `[`%<-%`](https://future.futureverse.org/reference/futureAssign.html)` ``{`` `[`Sys.sleep`](https://rdrr.io/r/base/Sys.sleep.html)`(``5``)``; ``3.14`` ``}`\
+`y`` `[`%<-%`](https://future.futureverse.org/reference/futureAssign.html)` ``{`` `[`Sys.sleep`](https://rdrr.io/r/base/Sys.sleep.html)`(``5``)``; ``2.71`` ``}`\
+`x`` ``+`` ``y`\
+`#> [1] 5.85`
 
 This is obviously a toy example to illustrate what futures look like and
 how to work with them. For further examples on how to use futures, see

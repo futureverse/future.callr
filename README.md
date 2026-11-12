@@ -21,13 +21,13 @@ utilizes the **[callr]** package.
 For example,
 
 ```r
-> library(future)
-> plan(future.callr::callr)
->
-> x %<-% { Sys.sleep(5); 3.14 }
-> y %<-% { Sys.sleep(5); 2.71 }
-> x + y
-[1] 5.85
+library(future)
+plan(future.callr::callr)
+
+x %<-% { Sys.sleep(5); 3.14 }
+y %<-% { Sys.sleep(5); 2.71 }
+x + y
+#> [1] 5.85
 ```
 
 This is obviously a toy example to illustrate what futures look like

@@ -4,7 +4,7 @@
 <a href="https://CRAN.R-project.org/web/checks/check_results_future.callr.html"><img border="0" src="https://www.r-pkg.org/badges/version/future.callr" alt="CRAN check status"/></a> <a href="https://github.com/futureverse/future.callr/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/futureverse/future.callr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>  <a href="https://github.com/futureverse/future.callr/actions?query=workflow%3Afuture_tests"><img border="0" src="https://github.com/futureverse/future.callr/actions/workflows/future_tests.yaml/badge.svg?branch=develop" alt="future.tests checks status"/></a>   <a href="https://app.codecov.io/gh/futureverse/future.callr"><img border="0" src="https://codecov.io/gh/futureverse/future.callr/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
 </div>
 
-# future.callr: A Future API for Parallel Processing using 'callr' 
+# future.callr: Parallel Future Backend using 'callr'
 
 ## Introduction
 

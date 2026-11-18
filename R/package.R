@@ -1,4 +1,4 @@
-#' future.callr: A Future for callr
+#' future.callr: Parallel Future Backend using 'callr'
 #'
 #' The \pkg{future.callr} package implements the Future API
 #' on top of \pkg{callr}.

@@ -4,7 +4,7 @@
 \name{future.callr}
 \alias{future.callr}
 \alias{future.callr-package}
-\title{future.callr: A Future for callr}
+\title{future.callr: Parallel Future Backend using 'callr'}
 \description{
 The \pkg{future.callr} package implements the Future API
 on top of \pkg{callr}.

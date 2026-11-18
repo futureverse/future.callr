@@ -6,4 +6,4 @@
   callr futures
 - [`future.callr`](https://future.callr.futureverse.org/reference/future.callr.md)
   [`future.callr-package`](https://future.callr.futureverse.org/reference/future.callr.md)
-  : future.callr: A Future for callr
+  : future.callr: Parallel Future Backend using 'callr'

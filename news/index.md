@@ -4,6 +4,9 @@
 
 ### Bug Fixes
 
+- [`listFutures()`](https://future.futureverse.org/reference/FutureBackend-class.html)
+  did not list the active futures of the backend.
+
 - Waiting for an available worker with a timeout greater than 60 seconds
   could take much longer than that.
 

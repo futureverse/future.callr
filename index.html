@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>A Future API for Parallel Processing using callr • future.callr</title>
+<title>Parallel Future Backend using callr • future.callr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -15,9 +15,9 @@
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A Future API for Parallel Processing using callr">
-<meta name="description" content="Implementation of the Future API &lt;doi:10.32614/RJ-2021-048&gt; on top of the callr package. This allows you to process futures, as defined by the future package, in parallel out of the box, on your local (Linux, macOS, Windows, ...) machine. Contrary to backends relying on the parallel package (e.g. future::multisession) and socket connections, the callr backend provided here can run more than 125 parallel R processes.">
-<meta property="og:description" content="Implementation of the Future API &lt;doi:10.32614/RJ-2021-048&gt; on top of the callr package. This allows you to process futures, as defined by the future package, in parallel out of the box, on your local (Linux, macOS, Windows, ...) machine. Contrary to backends relying on the parallel package (e.g. future::multisession) and socket connections, the callr backend provided here can run more than 125 parallel R processes.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Parallel Future Backend using callr">
+<meta name="description" content="Implementation of the Future API &lt;doi:10.32614/RJ-2021-048&gt; on top of the callr package. The backend is fully compliant with the Future API, as validated by the future.tests conformance test suite, meaning that code using futures gives identical results and behaves the same regardless of which future backend is used. Each future is resolved in a fresh background R session on the local machine, and, contrary to backends relying on the parallel package and socket connections, it can run more than 125 parallel R processes. A common use is to parallelize existing map-reduce calls via the futurize package &lt;doi:10.48550/arXiv.2601.17578&gt;, e.g. plan(future.callr::callr) followed by lapply(xs, fcn) |&gt; futurize() or purrr::map(xs, fcn) |&gt; futurize().">
+<meta property="og:description" content="Implementation of the Future API &lt;doi:10.32614/RJ-2021-048&gt; on top of the callr package. The backend is fully compliant with the Future API, as validated by the future.tests conformance test suite, meaning that code using futures gives identical results and behaves the same regardless of which future backend is used. Each future is resolved in a fresh background R session on the local machine, and, contrary to backends relying on the parallel package and socket connections, it can run more than 125 parallel R processes. A common use is to parallelize existing map-reduce calls via the futurize package &lt;doi:10.48550/arXiv.2601.17578&gt;, e.g. plan(future.callr::callr) followed by lapply(xs, fcn) |&gt; futurize() or purrr::map(xs, fcn) |&gt; futurize().">
 <!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-SB3EQSD9FR"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -34,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="index.html">future.callr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1-9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1-9011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,28 +99,43 @@
 <div class="row">
   <main id="main" class="col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="futurecallr-a-future-api-for-parallel-processing-using-callr">future.callr: A Future API for Parallel Processing using ‘callr’<a class="anchor" aria-label="anchor" href="#futurecallr-a-future-api-for-parallel-processing-using-callr"></a>
+<div class="page-header"><h1 id="futurecallr-parallel-future-backend-using-callr">future.callr: Parallel Future Backend using ‘callr’<a class="anchor" aria-label="anchor" href="#futurecallr-parallel-future-backend-using-callr"></a>
 </h1></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <strong><a href="https://cran.r-project.org/package=future" class="external-link">future</a></strong> package provides a generic API for using futures in R. A future is a simple yet powerful mechanism to evaluate an R expression and retrieve its value at some point in time. Futures can be resolved in many different ways depending on which strategy is used. There are various types of synchronous and asynchronous futures to choose from in the <strong><a href="https://cran.r-project.org/package=future" class="external-link">future</a></strong> package.</p>
-<p>This package, <strong><a href="https://cran.r-project.org/package=future.callr" class="external-link">future.callr</a></strong>, provides a type of futures that utilizes the <strong><a href="https://cran.r-project.org/package=callr" class="external-link">callr</a></strong> package.</p>
-<p>For example,</p>
+<p>The <strong><a href="https://future.callr.futureverse.org">future.callr</a></strong> package is a backend for the <strong><a href="https://future.futureverse.org" class="external-link">future</a></strong> framework, also known as the <a href="https://www.futureverse.org" class="external-link">Futureverse</a>. The Futureverse makes it easy to parallelize existing R code - often with only a minor change of code. Most users interact with it via higher-level packages such as <strong><a href="https://futurize.futureverse.org" class="external-link">futurize</a></strong>, <strong><a href="https://future.apply.futureverse.org" class="external-link">future.apply</a></strong>, <strong><a href="https://furrr.futureverse.org" class="external-link">furrr</a></strong>, and <strong><a href="https://doFuture.futureverse.org" class="external-link">doFuture</a></strong>, and you choose <em>where</em> and <em>how</em> the code runs by setting a future backend with <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan()</a></code>. This package adds the <code>callr</code> backend, which runs each future in a fresh background R process on the local machine using the <strong><a href="https://cran.r-project.org/package=callr" class="external-link">callr</a></strong> package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://future.futureverse.org" class="external-link">future</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future.callr</span><span class="fu">::</span><span class="va"><a href="reference/callr.html">callr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://futurize.futureverse.org" class="external-link">futurize</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future.callr</span><span class="fu">::</span><span class="va"><a href="reference/callr.html">callr</a></span><span class="op">)</span>  <span class="co"># parallelize on the current machine</span></span>
 <span></span>
-<span><span class="va">x</span> <span class="op"><a href="https://future.futureverse.org/reference/futureAssign.html" class="external-link">%&lt;-%</a></span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>; <span class="fl">3.14</span> <span class="op">}</span></span>
-<span><span class="va">y</span> <span class="op"><a href="https://future.futureverse.org/reference/futureAssign.html" class="external-link">%&lt;-%</a></span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>; <span class="fl">2.71</span> <span class="op">}</span></span>
-<span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span>
-<span><span class="co">#&gt; [1] 5.85</span></span></code></pre></div>
-<p>This is obviously a toy example to illustrate what futures look like and how to work with them. For further examples on how to use futures, see the vignettes of the <strong><a href="https://cran.r-project.org/package=future" class="external-link">future</a></strong> package as well as those of <strong><a href="https://cran.r-project.org/package=future.apply" class="external-link">future.apply</a></strong> and <strong><a href="https://cran.r-project.org/package=doFuture" class="external-link">doFuture</a></strong>.</p>
+<span><span class="co"># A slow function</span></span>
+<span><span class="va">slow_fcn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1.0</span><span class="op">)</span></span>
+<span>  <span class="va">x</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Example data</span></span>
+<span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
+<span></span>
+<span><span class="co"># Sequential and parallel base R apply</span></span>
+<span><span class="va">ys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">xs</span>, <span class="va">slow_fcn</span><span class="op">)</span></span>
+<span><span class="va">ys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">xs</span>, <span class="va">slow_fcn</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://futurize.futureverse.org/reference/futurize.html" class="external-link">futurize</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Sequential and parallel purrr map</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
+<span><span class="va">ys</span> <span class="op">&lt;-</span> <span class="va">xs</span> <span class="op">|&gt;</span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">slow_fcn</span><span class="op">)</span></span>
+<span><span class="va">ys</span> <span class="op">&lt;-</span> <span class="va">xs</span> <span class="op">|&gt;</span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">slow_fcn</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://futurize.futureverse.org/reference/futurize.html" class="external-link">futurize</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Sequential and parallel foreach calls</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RevolutionAnalytics/foreach" class="external-link">foreach</a></span><span class="op">)</span></span>
+<span><span class="va">ys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/foreach/man/foreach.html" class="external-link">foreach</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">xs</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/foreach/man/foreach.html" class="external-link">%do%</a></span> <span class="fu">slow_fcn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="va">ys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/foreach/man/foreach.html" class="external-link">foreach</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">xs</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/foreach/man/foreach.html" class="external-link">%do%</a></span> <span class="fu">slow_fcn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://futurize.futureverse.org/reference/futurize.html" class="external-link">futurize</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The only thing that differs from using <a href="https://www.futureverse.org/backends.html" class="external-link">any other future backend</a> is the <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan()</a></code> call. The code does not have to change, it gives identical results, and it behaves exactly the same.</p>
 </div>
 <div class="section level2">
-<h2 id="using-the-callr-backend">Using the callr backend<a class="anchor" aria-label="anchor" href="#using-the-callr-backend"></a>
+<h2 id="the-callr-backend">The callr backend<a class="anchor" aria-label="anchor" href="#the-callr-backend"></a>
 </h2>
-<p>The <strong>future.callr</strong> package implements a <strong>future</strong> backend wrapper for <strong>callr</strong>.</p>
 <table class="table">
 <colgroup>
 <col width="8%">
@@ -138,45 +153,37 @@
 <td align="left"><code>plan(multisession)</code></td>
 </tr></tbody>
 </table>
+<p>Each <code>callr</code> future is resolved in a fresh background R process, which ends as soon as the value of the future has been collected. In contrast, <code>multisession</code> futures are resolved by R workers that stay alive and serve many futures over their life spans.</p>
 <div class="section level3">
-<h3 id="each-callr-future-uses-a-fresh-r-session">Each callr future uses a fresh R session<a class="anchor" aria-label="anchor" href="#each-callr-future-uses-a-fresh-r-session"></a>
+<h3 id="advantages">Advantages<a class="anchor" aria-label="anchor" href="#advantages"></a>
 </h3>
-<p>When using <code>callr</code> futures, each future is resolved in a fresh background R session which ends as soon as the value of the future has been collected. In contrast, <code>multisession</code> futures are resolved in background R worker sessions that serve multiple futures over their life spans. The advantage of using a new R process for each future is that the R environment is guaranteed not to be contaminated by previous futures, e.g. memory allocations, finalizers, modified options, and loaded and attached packages. The disadvantage is an added overhead of launching a new R process. (At the moment, I am neither aware of formal benchmarking of this extra overhead nor of performance comparisons of <code>callr</code> to alternative future backends.)</p>
+<ul>
+<li><p>Each future starts from a clean R session. Futures cannot affect each other via memory allocations, finalizers, modified options, or loaded and attached packages.</p></li>
+<li><p>More than 125 futures can run in parallel. The <code>multisession</code> and <code>cluster</code> backends use one R connection per worker, and R has a default limit of 125 connections per session. <strong>callr</strong> does not use R connections, so this limit does not apply.</p></li>
+<li><p>No ports are used, which means there are no port clashes with other processes, and no firewall alerts on Windows.</p></li>
+</ul>
 </div>
 <div class="section level3">
-<h3 id="more-than-125-parallel-callr-futures">More than 125 parallel callr futures<a class="anchor" aria-label="anchor" href="#more-than-125-parallel-callr-futures"></a>
+<h3 id="limitations">Limitations<a class="anchor" aria-label="anchor" href="#limitations"></a>
 </h3>
-<p>Another advantage with <code>callr</code> futures compared to <code>multisession</code> futures is that they do not communicate via R (socket) connections. This avoids the limitation in the number of parallel futures that can be active at any time that <code>multisession</code> futures and <code>cluster</code> futures in general have, which they inherit from <code>SOCKcluster</code> clusters as defined by the <strong>parallel</strong> package. The number of parallel futures these can serve is limited by the <a href="https://github.com/HenrikBengtsson/Wishlist-for-R/issues/28" class="external-link">maximum number of open connections in R</a>, which currently is 125 (excluding the three reserved by R itself). Note that these 125 slots have to be shared with file connections etc. To increase this limit, R has to be rebuilt from source. However, since <code>callr</code> futures rely on <a href="https://github.com/r-lib/processx/issues/91" class="external-link">the callr package which does not make use of R-specific connections</a>, there is no limit in the number of background R processes that can be used simultaneously.</p>
+<ul>
+<li><p>Launching a new R process for each future adds overhead. This makes the <code>callr</code> backend less suited for many small futures, where <code>plan(multisession)</code> might be faster.</p></li>
+<li><p>The R processes always run on the local machine. For workers on other machines, or on a high-performance compute (HPC) cluster, use another future backend, e.g. <code>plan(cluster)</code> or <strong><a href="https://future.batchtools.futureverse.org" class="external-link">future.batchtools</a></strong>.</p></li>
+</ul>
 </div>
-<div class="section level3">
-<h3 id="no-ports-are-used---no-port-clashes-or-firewall-issues">No ports are used - no port clashes or firewall issues<a class="anchor" aria-label="anchor" href="#no-ports-are-used---no-port-clashes-or-firewall-issues"></a>
-</h3>
-<p>A third advantage with <code>callr</code> futures is that there is no risk of port-clashing with other processes on the system when clusters are set up (*), because <strong>callr</strong> does not rely on ports. Furthermore, on Windows, the firewall triggers an alert that the user needs to approve whenever a not-previously-approved port is requested by R - which happens also for local, non-public ports (StackOverflow Question #47353848) that are used by <code>SOCKcluster</code>:s. When using <code>callr</code> futures, no sockets and therefore no ports are involved.</p>
-<p>(*) To lower the risk for such clashes <code>SOCKcluster</code>:s (of the <strong>parallel</strong> package) request random ports, but clashes still occur at times.</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="demos">Demos<a class="anchor" aria-label="anchor" href="#demos"></a>
-</h2>
-<p>The <strong><a href="https://cran.r-project.org/package=future" class="external-link">future</a></strong> package provides a demo using futures for calculating a set of Mandelbrot planes. The demo does not assume anything about what type of futures are used. <em>The user has full control of how futures are evaluated</em>. For instance, to use <code>callr</code> futures, run the demo as:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://future.futureverse.org" class="external-link">future</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future.callr</span><span class="fu">::</span><span class="va"><a href="reference/callr.html">callr</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/demo.html" class="external-link">demo</a></span><span class="op">(</span><span class="st">"mandelbrot"</span>, package <span class="op">=</span> <span class="st">"future"</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>R package future.callr is available on <a href="https://cran.r-project.org/package=future.callr" class="external-link">CRAN</a> and can be installed in R as:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"future.callr"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="pre-release-version">Pre-release version<a class="anchor" aria-label="anchor" href="#pre-release-version"></a>
 </h3>
-<p>To install the pre-release version that is available in Git branch <code>develop</code> on GitHub, use:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"futureverse/future.callr"</span>, ref<span class="op">=</span><span class="st">"develop"</span><span class="op">)</span></span></code></pre></div>
-<p>This will install the package from source.</p>
+<p>To install the pre-release version, use:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"future.callr"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://futureverse-devel.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 </div>

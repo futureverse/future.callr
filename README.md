@@ -4,124 +4,106 @@
 <a href="https://CRAN.R-project.org/web/checks/check_results_future.callr.html"><img border="0" src="https://www.r-pkg.org/badges/version/future.callr" alt="CRAN check status"/></a> <a href="https://github.com/futureverse/future.callr/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/futureverse/future.callr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>  <a href="https://github.com/futureverse/future.callr/actions?query=workflow%3Afuture_tests"><img border="0" src="https://github.com/futureverse/future.callr/actions/workflows/future_tests.yaml/badge.svg?branch=develop" alt="future.tests checks status"/></a>   <a href="https://app.codecov.io/gh/futureverse/future.callr"><img border="0" src="https://codecov.io/gh/futureverse/future.callr/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
 </div>
 
-# future.callr: Parallel Future Backend using 'callr'
+# future.callr: Parallel Future Backend using 'callr' 
 
 ## Introduction
 
-The **[future]** package provides a generic API for using futures in
-R.  A future is a simple yet powerful mechanism to evaluate an R
-expression and retrieve its value at some point in time.  Futures can
-be resolved in many different ways depending on which strategy is
-used.  There are various types of synchronous and asynchronous futures
-to choose from in the **[future]** package.
-
-This package, **[future.callr]**, provides a type of futures that
-utilizes the **[callr]** package.
-
-For example,
+The **[future.callr]** package is a backend for the **[future]**
+framework, also known as the [Futureverse]. The Futureverse makes it
+easy to parallelize existing R code - often with only a minor change
+of code. Most users interact with it via higher-level packages such
+as **[futurize]**, **[future.apply]**, **[furrr]**, and
+**[doFuture]**, and you choose _where_ and _how_ the code runs by
+setting a future backend with `plan()`. This package adds the `callr`
+backend, which runs each future in a fresh background R process on
+the local machine using the **[callr]** package.
 
 ```r
-library(future)
-plan(future.callr::callr)
+library(futurize)
+plan(future.callr::callr)  # parallelize on the current machine
 
-x %<-% { Sys.sleep(5); 3.14 }
-y %<-% { Sys.sleep(5); 2.71 }
-x + y
-#> [1] 5.85
+# A slow function
+slow_fcn <- function(x) {
+  Sys.sleep(1.0)
+  x^2
+}
+
+# Example data
+xs <- 1:10
+
+# Sequential and parallel base R apply
+ys <- lapply(xs, slow_fcn)
+ys <- lapply(xs, slow_fcn) |> futurize()
+
+# Sequential and parallel purrr map
+library(purrr)
+ys <- xs |>  map(slow_fcn)
+ys <- xs |>  map(slow_fcn) |> futurize()
+
+# Sequential and parallel foreach calls
+library(foreach)
+ys <- foreach(x = xs) %do% slow_fcn(x)
+ys <- foreach(x = xs) %do% slow_fcn(x) |> futurize()
 ```
 
-This is obviously a toy example to illustrate what futures look like
-and how to work with them.  For further examples on how to use
-futures, see the vignettes of the **[future]** package as well as
-those of **[future.apply]** and **[doFuture]**.
+The only thing that differs from using [any other future backend](https://www.futureverse.org/backends.html) is
+the `plan()` call. The code does not have to change, it gives
+identical results, and it behaves exactly the same.
 
 
-## Using the callr backend
-
-The **future.callr** package implements a **future** backend wrapper
-for **callr**.
-
+## The callr backend
 
 | Backend | Description                                                      | Alternative in future package
 |:--------|:-----------------------------------------------------------------|:------------------------------
 | `callr` | parallel evaluation in a separate R process (on current machine) | `plan(multisession)`
 
-
-### Each callr future uses a fresh R session
-
-When using `callr` futures, each future is resolved in a fresh
-background R session which ends as soon as the value of the future has
-been collected.  In contrast, `multisession` futures are resolved in
-background R worker sessions that serve multiple futures over their
-life spans.  The advantage of using a new R process for each future is
-that the R environment is guaranteed not to be contaminated by
-previous futures, e.g. memory allocations, finalizers, modified
-options, and loaded and attached packages.  The disadvantage is an
-added overhead of launching a new R process.  (At the moment, I am
-neither aware of formal benchmarking of this extra overhead nor of
-performance comparisons of `callr` to alternative future backends.)
+Each `callr` future is resolved in a fresh background R process, which
+ends as soon as the value of the future has been collected. In
+contrast, `multisession` futures are resolved by R workers that stay
+alive and serve many futures over their life spans.
 
 
-### More than 125 parallel callr futures
+### Advantages
 
-Another advantage with `callr` futures compared to `multisession`
-futures is that they do not communicate via R (socket) connections.
-This avoids the limitation in the number of parallel futures that can
-be active at any time that `multisession` futures and `cluster`
-futures in general have, which they inherit from `SOCKcluster`
-clusters as defined by the **parallel** package.  The number of
-parallel futures these can serve is limited by the [maximum number of
-open connections in
-R](https://github.com/HenrikBengtsson/Wishlist-for-R/issues/28), which
-currently is 125 (excluding the three reserved by R itself).  Note
-that these 125 slots have to be shared with file connections etc.  To
-increase this limit, R has to be rebuilt from source.  However, since
-`callr` futures rely on [the callr package which does not make use of
-R-specific connections](https://github.com/r-lib/processx/issues/91),
-there is no limit in the number of background R processes that can be
-used simultaneously.
+* Each future starts from a clean R session. Futures cannot affect
+  each other via memory allocations, finalizers, modified options, or
+  loaded and attached packages.
+
+* More than 125 futures can run in parallel. The `multisession` and
+  `cluster` backends use one R connection per worker, and R has a
+  default limit of 125 connections per session. **callr** does not
+  use R connections, so this limit does not apply.
+
+* No ports are used, which means there are no port clashes with other
+  processes, and no firewall alerts on Windows.
 
 
-### No ports are used - no port clashes or firewall issues
+### Limitations
 
-A third advantage with `callr` futures is that there is no risk of
-port-clashing with other processes on the system when clusters are set
-up (*), because **callr** does not rely on ports.  Furthermore, on
-Windows, the firewall triggers an alert that the user needs to approve
-whenever a not-previously-approved port is requested by R - which
-happens also for local, non-public ports (StackOverflow Question
-#47353848) that are used by `SOCKcluster`:s.  When using `callr`
-futures, no sockets and therefore no ports are involved.
+* Launching a new R process for each future adds overhead. This makes
+  the `callr` backend less suited for many small futures, where
+  `plan(multisession)` might be faster.
 
-(*) To lower the risk for such clashes `SOCKcluster`:s (of the
-**parallel** package) request random ports, but clashes still occur at
-times.
+* The R processes always run on the local machine. For workers on
+  other machines, or on a high-performance compute (HPC) cluster, use
+  another future backend, e.g. `plan(cluster)` or
+  **[future.batchtools]**.
 
 
-
-## Demos
-
-The **[future]** package provides a demo using futures for calculating
-a set of Mandelbrot planes.  The demo does not assume anything about
-what type of futures are used.  _The user has full control of how
-futures are evaluated_.  For instance, to use `callr` futures, run the
-demo as:
-
-```r
-library(future)
-plan(future.callr::callr)
-demo("mandelbrot", package = "future", ask = FALSE)
-```
-
-
+[Futureverse]: https://www.futureverse.org
+[future]: https://future.futureverse.org
+[future.callr]: https://future.callr.futureverse.org
+[future.apply]: https://future.apply.futureverse.org
+[future.batchtools]: https://future.batchtools.futureverse.org
+[furrr]: https://furrr.futureverse.org
+[doFuture]: https://doFuture.futureverse.org
+[futurize]: https://futurize.futureverse.org
 [callr]: https://cran.r-project.org/package=callr
-[future]: https://cran.r-project.org/package=future
-[future.callr]: https://cran.r-project.org/package=future.callr
-[future.apply]: https://cran.r-project.org/package=future.apply
-[doFuture]: https://cran.r-project.org/package=doFuture
 
 ## Installation
+
 R package future.callr is available on [CRAN](https://cran.r-project.org/package=future.callr) and can be installed in R as:
+
 ```r
 install.packages("future.callr")
 ```
@@ -129,11 +111,12 @@ install.packages("future.callr")
 
 ### Pre-release version
 
-To install the pre-release version that is available in Git branch `develop` on GitHub, use:
+To install the pre-release version, use:
+
 ```r
-remotes::install_github("futureverse/future.callr", ref="develop")
+install.packages("future.callr", repos = c("https://futureverse-devel.r-universe.dev", "https://cloud.r-project.org"))
 ```
-This will install the package from source.  
+
 
 <!-- pkgdown-drop-below -->
 

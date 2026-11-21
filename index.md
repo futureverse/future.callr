@@ -37,8 +37,8 @@ background R process on the local machine using the
 \
 `# Sequential and parallel purrr map`\
 [`library`](https://rdrr.io/r/base/library.html)`(`[`purrr`](https://purrr.tidyverse.org/)`)`\
-`ys`` ``<-`` ``xs`` ``|>``  `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`\
-`ys`` ``<-`` ``xs`` ``|>``  `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`` ``|>`` `[`futurize`](https://futurize.futureverse.org/reference/futurize.html)`(``)`\
+`ys`` ``<-`` ``xs`` ``|>`` `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`\
+`ys`` ``<-`` ``xs`` ``|>`` `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`` ``|>`` `[`futurize`](https://futurize.futureverse.org/reference/futurize.html)`(``)`\
 \
 `# Sequential and parallel foreach calls`\
 [`library`](https://rdrr.io/r/base/library.html)`(`[`foreach`](https://github.com/RevolutionAnalytics/foreach)`)`\

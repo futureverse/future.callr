@@ -37,8 +37,8 @@ background R process on the local machine using the
 \
 `# Sequential and parallel purrr map`\
 [`library`](https://rdrr.io/r/base/library.html)`(`[`purrr`](https://purrr.tidyverse.org/)`)`\
-`ys`` ``<-`` ``xs`` ``|>``  `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`\
-`ys`` ``<-`` ``xs`` ``|>``  `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`` ``|>`` `[`futurize`](https://futurize.futureverse.org/reference/futurize.html)`(``)`\
+`ys`` ``<-`` ``xs`` ``|>`` `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`\
+`ys`` ``<-`` ``xs`` ``|>`` `[`map`](https://purrr.tidyverse.org/reference/map.html)`(``slow_fcn``)`` ``|>`` `[`futurize`](https://futurize.futureverse.org/reference/futurize.html)`(``)`\
 \
 `# Sequential and parallel foreach calls`\
 [`library`](https://rdrr.io/r/base/library.html)`(`[`foreach`](https://github.com/RevolutionAnalytics/foreach)`)`\
@@ -113,9 +113,3 @@ To install the pre-release version, use:
   [`future.callr-package`](https://future.callr.futureverse.org/reference/future.callr.md)
   : future.callr: Parallel Future Backend using 'callr'
 
-# Articles
-
-### All vignettes
-
-- [A Future for
-  callr](https://future.callr.futureverse.org/articles/future.callr.md):

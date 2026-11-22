@@ -533,7 +533,7 @@ await <- function(future, ...) {
   }
 
   if (length(prototype_fields) > 0) {
-    result[["PROTOTYPE_WARNING"]] <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), max_head = Inf, collapse = ", ", last_collapse  = " and "))
+    result[["PROTOTYPE_WARNING"]] <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), maxHead = Inf, collapse = ", ", lastCollapse = " and "))
   }
 
   future[["result"]] <- result

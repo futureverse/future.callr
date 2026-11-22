@@ -10,6 +10,27 @@ immediateConditionsPath <- import_future("immediateConditionsPath")
 fileImmediateConditionHandler <- import_future("fileImmediateConditionHandler")
 assert_no_references <- import_future("assert_no_references")
 summarize_size_of_globals <- import_future("summarize_size_of_globals")
+stop_if_not <- import_future("stop_if_not")
+hpaste <- import_future("hpaste")
+commaq <- import_future("commaq")
+
+## Debug functions imported from 'future'. Their output is controlled by
+## argument 'debug', which defaults to R option 'future.debug'. Here, all
+## calls are already conditioned on 'debug' by the caller, so we default
+## to 'debug = TRUE'
+import_future_debug <- function(name) {
+  fcn <- import_future(name)
+  formals(fcn)[["debug"]] <- TRUE
+  fcn
+}
+mdebug <- import_future_debug("mdebug")
+mdebugf <- import_future_debug("mdebugf")
+mdebug_push <- import_future_debug("mdebug_push")
+mdebugf_push <- import_future_debug("mdebugf_push")
+mdebug_pop <- import_future_debug("mdebug_pop")
+mdebugf_pop <- import_future_debug("mdebugf_pop")
+mprint <- import_future_debug("mprint")
+mstr <- import_future_debug("mstr")
 
 ## An environment must be imported when the package is loaded, otherwise
 ## we would get a copy and not share the state with 'future'

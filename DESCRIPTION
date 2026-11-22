@@ -1,5 +1,5 @@
 Package: future.callr
-Version: 1.0.1-9012
+Version: 1.0.1-9013
 Depends:
     R (>= 3.4.0),
     future (>= 1.80.0)
@@ -24,8 +24,8 @@ Description: Implementation of the Future API <doi:10.32614/RJ-2021-048> on
     can run more than 125 parallel R processes. A common use is to
     parallelize existing map-reduce calls via the 'futurize' package
     <doi:10.48550/arXiv.2601.17578>, e.g. 'plan(future.callr::callr)'
-    followed by 'lapply(xs, fcn) |> futurize()' or 'purrr::map(xs, fcn) |>
-    futurize()'.
+    followed by 'lapply(xs, fcn) |> futurize()' or
+    'purrr::map(xs, fcn) |> futurize()'.
 License: Apache License (>= 2)
 LazyLoad: TRUE
 URL: https://future.callr.futureverse.org, https://github.com/futureverse/future.callr

@@ -5,8 +5,6 @@
 ^incl/
 ^pkgdown/
 ^revdep/
-^vignettes/.*[.](pdf|PDF)$
-^vignettes/.*[.](r|R)$
 ^LICENSE\.md$
 ^cran-comments[.].*$
 ^Makefile$

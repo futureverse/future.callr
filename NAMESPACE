@@ -36,6 +36,5 @@ importFrom(parallelly,
 importFrom(utils,
   capture.output,
   packageVersion,
-  str,
   tail
 )

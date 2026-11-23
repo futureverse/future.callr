@@ -1,35 +1,18 @@
-#' @importFrom future FutureError
-waitForWorker <- function(type,
-         workers,
-         await = NULL,
-         timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
-         delta = getOption("future.wait.interval", 0.2),
-         alpha = getOption("future.wait.alpha", 1.01),
-         debug = FALSE) {
-  if (debug) {
-    mdebug_push("waitForWorker() ...")
-    on.exit(mdebug_pop())
-  }
-  
-  stop_if_not(length(type) == 1, is.character(type), !is.na(type), nzchar(type))
-  stop_if_not(is.null(await) || is.function(await))
-  workers <- as.integer(workers)
-  stop_if_not(length(workers) == 1, is.finite(workers), workers >= 1L)
-  stop_if_not(length(timeout) == 1, is.finite(timeout), timeout >= 0)
-  stop_if_not(length(alpha) == 1, is.finite(alpha), alpha > 0)
+## Local copy of future:::waitForWorker(), for future (< 1.82.0-9016).
+## It is replaced by the one in 'future', if available, when this
+## package is loaded; see import_future_functions()
+#' @importFrom future FutureError nbrOfWorkers
+waitForWorker <- function(backend, workers = nbrOfWorkers(backend), timeout = backend[["timeout"]], delta = backend[["delta"]], alpha = backend[["alpha"]], registry = FutureRegistry, debug = FALSE) {
+  stop_if_not(
+    length(workers) == 1L, is.numeric(workers), !is.na(workers), workers >= 1,
+    length(timeout) == 1L, is.numeric(timeout), !is.na(timeout), timeout >= 0,
+    length(delta) == 1L, is.numeric(delta), is.finite(delta), delta > 0,
+    length(alpha) == 1L, is.numeric(alpha), is.finite(alpha), alpha > 0,
+    is.function(registry)
+  )
 
-  ## FutureRegistry to use
-  reg <- sprintf("workers-%s", type)
-
-  ## Use a default await() function?
-  if (is.null(await)) {
-    await <- function() FutureRegistry(reg, action = "collect-first")
-  }  
- 
-  ## Number of occupied workers
-  usedWorkers <- function() {
-    length(FutureRegistry(reg, action = "list", earlySignal = FALSE))
-  }
+  ## Name of the registry to poll
+  reg <- backend[["reg"]]
 
   t0 <- Sys.time()
   dt <- 0
@@ -38,7 +21,7 @@ waitForWorker <- function(type,
   finished <- FALSE
   while (dt <= timeout) {
     ## Check for available workers
-    used <- usedWorkers()
+    used <- length(registry(reg, action = "list", earlySignal = FALSE))
     finished <- (used < workers)
     if (finished) break
 
@@ -47,12 +30,12 @@ waitForWorker <- function(type,
     ## Wait
     Sys.sleep(interval)
     interval <- alpha * interval
-    
+
     ## Finish/close workers, iff possible
-    await()
+    registry(reg, action = "collect-first")
 
     iter <- iter + 1L
-    dt <- difftime(Sys.time(), t0)
+    dt <- difftime(Sys.time(), t0, units = "secs")
   }
 
   if (!finished) {
@@ -60,4 +43,6 @@ waitForWorker <- function(type,
     if (debug) mdebug(msg)
     stop(FutureError(msg))
   }
+
+  invisible(NULL)
 }

@@ -32,4 +32,22 @@ stopifnot(inherits(res, "error"), inherits(res, "FutureError"))
 ## Shut down workers before all futures have been collected (here 'f1')
 plan(sequential)
 
+message("- waitForWorker() respects the backend's timeout setting")
+## The backend records 'future.wait.timeout' when the plan is set up ...
+options(future.wait.timeout = 0.3)
+plan(future.callr::callr, workers = 1L)
+## ... so changing the option afterward should have no effect
+options(future.wait.timeout = 30 * 24 * 60 * 60)
+
+## Starts immediately - no worker is occupied yet
+f1 <- future({ Sys.sleep(3); 1 })
+
+## Should timeout when there are no free workers
+res <- tryCatch(future(2), error = identity)
+print(res)
+stopifnot(inherits(res, "error"), inherits(res, "FutureError"))
+
+## Shut down workers before all futures have been collected (here 'f1')
+plan(sequential)
+
 message("*** callr() - timeouts ... DONE")

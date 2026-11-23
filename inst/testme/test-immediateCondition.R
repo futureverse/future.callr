@@ -52,7 +52,6 @@ recordMessages <- function(expr, ...) {
 
 if (isTRUE(getOption("future.psock.relay.immediate"))) {
   excl <- "cluster"
-  if (getRversion() < "3.4.0") excl <- c(excl, "multisession")
   strategies <- supportedStrategies(cores = 2L, excl = excl)
   strategies <- c(strategies, "sequential")
 } else {

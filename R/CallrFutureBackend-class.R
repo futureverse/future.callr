@@ -28,17 +28,18 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
     reg = "workers-callr",
     workers = workers,
     supervise = supervise,
-    future.wait.timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
-    future.wait.interval = getOption("future.wait.interval", 0.01),
-    future.wait.alpha = getOption("future.wait.alpha", 1.01),
+    timeout = getOption("future.wait.timeout", 30 * 24 * 60 * 60),
+    delta = getOption("future.wait.interval", 0.01),
+    alpha = getOption("future.wait.alpha", 1.01),
     ...
   )
   core[["futureClasses"]] <- c("CallrFuture", core[["futureClasses"]])
-  core <- structure(core, class = c("CallrFutureBackend", "MultiprocessFutureBackend", "FutureBackend", class(core)))
+  core <- structure(core, class = c("CallrFutureBackend", "MultiprocessFutureBackend", class(core)))
   core
 }
 
 
+#' @importFrom utils packageVersion
 #' @importFrom future run FutureError
 #' @importFrom callr r_bg
 #' @keywords internal
@@ -46,8 +47,6 @@ CallrFutureBackend <- function(workers = availableCores(), supervise = FALSE, ..
 #' @export
 launchFuture.CallrFutureBackend <- local({
   ## MEMOIZATION
-  evalFuture <- import_future("evalFuture")
-  getFutureData <- import_future("getFutureData")
   with_stealth_rng <- if (packageVersion("processx") >= "3.8.6") {
     identity
   } else {
@@ -105,11 +104,7 @@ launchFuture.CallrFutureBackend <- local({
     workers <- backend[["workers"]]
     supervise <- backend[["supervise"]]
 
-    timeout = backend[["future.wait.timeout"]]
-    delta   = backend[["future.wait.interval"]]
-    alpha   = backend[["future.wait.alpha"]]
-
-    waitForWorker(type = "callr", workers = workers, debug = debug)
+    waitForWorker(backend, workers = workers, registry = FutureRegistry, debug = debug)
 
     ## 2. Allocate future to worker
     reg <- backend[["reg"]]
@@ -210,30 +205,25 @@ nbrOfFreeWorkers.CallrFutureBackend <- function(evaluator = NULL, background = F
 
 
 #' @exportS3Method getFutureBackendConfigs CallrFuture
-getFutureBackendConfigs.CallrFuture <- local({
-  immediateConditionsPath <- import_future("immediateConditionsPath")
-  fileImmediateConditionHandler <- import_future("fileImmediateConditionHandler")
-  
-  function(future, ..., debug = isTRUE(getOption("future.debug"))) {
-    conditionClasses <- future[["conditions"]]
-    if (is.null(conditionClasses)) {
-      capture <- list()
-    } else {
-      path <- immediateConditionsPath(rootPath = tempdir())
-      capture <- list(
-        immediateConditionHandlers = list(
-          immediateCondition = function(cond) {
-            fileImmediateConditionHandler(cond, path = path)
-          }
-        )
+getFutureBackendConfigs.CallrFuture <- function(future, ..., debug = isTRUE(getOption("future.debug"))) {
+  conditionClasses <- future[["conditions"]]
+  if (is.null(conditionClasses)) {
+    capture <- list()
+  } else {
+    path <- immediateConditionsPath(rootPath = tempdir())
+    capture <- list(
+      immediateConditionHandlers = list(
+        immediateCondition = function(cond) {
+          fileImmediateConditionHandler(cond, path = path)
+        }
       )
-    }
-  
-    list(
-      capture = capture
     )
   }
-})
+
+  list(
+    capture = capture
+  )
+}
 
 
 #' Prints a callr future
@@ -371,9 +361,9 @@ result.CallrFuture <- function(future, ...) {
 #' @importFrom future FutureError FutureWarning FutureInterruptError
 await <- function(future, ...) {
   backend <- future[["backend"]]
-  timeout <- backend[["future.wait.timeout"]]
-  delta <- backend[["future.wait.interval"]]
-  alpha <- backend[["future.wait.alpha"]]
+  timeout <- backend[["timeout"]]
+  delta <- backend[["delta"]]
+  alpha <- backend[["alpha"]]
 
   stop_if_not(is.finite(timeout), timeout >= 0)
   stop_if_not(is.finite(alpha), alpha > 0)
@@ -543,7 +533,7 @@ await <- function(future, ...) {
   }
 
   if (length(prototype_fields) > 0) {
-    result[["PROTOTYPE_WARNING"]] <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), max_head = Inf, collapse = ", ", last_collapse  = " and "))
+    result[["PROTOTYPE_WARNING"]] <- sprintf("WARNING: The fields %s should be considered internal and experimental for now, that is, until the Future API for these additional features has been settled. For more information, please see https://github.com/HenrikBengtsson/future/issues/172", hpaste(sQuote(prototype_fields), maxHead = Inf, collapse = ", ", lastCollapse = " and "))
   }
 
   future[["result"]] <- result
@@ -569,9 +559,6 @@ await <- function(future, ...) {
 
 
 post_mortem_failure <- function(reason, future) {
-  assert_no_references <- import_future("assert_no_references")
-  summarize_size_of_globals <- import_future("summarize_size_of_globals")
-
   stop_if_not(inherits(future, "Future"))
   
   ## (1) Trimmed error message

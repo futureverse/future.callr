@@ -28,7 +28,7 @@ jobs:
       R_FUTURE_RNG_ONMISUSE: error
       
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -61,7 +61,7 @@ jobs:
       - name: Install 'future.tests' and any backend R packages
         run: |
           remotes::install_cran("future.tests")
-          remotes::install_github("HenrikBengtsson/future.tests", ref="develop")
+          remotes::install_github("futureverse/future.tests", ref="develop")
           if (grepl("::", plan <- "${{ matrix.future.plan }}") && nzchar(pkg <- sub("::.*", "", plan))) install.packages(pkg)
         shell: Rscript {0}
 
@@ -80,7 +80,7 @@ jobs:
 
       - name: Upload check results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ runner.os }}-r${{ matrix.future.plan }}-results
           path: check

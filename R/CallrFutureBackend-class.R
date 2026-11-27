@@ -346,6 +346,7 @@ result.CallrFuture <- function(future, ...) {
     } else {
       ex <- UnexpectedFutureResultError(future)
       future[["result"]] <- ex
+      future[["state"]] <- "failed"
       stop(ex)
     }
   }
@@ -475,6 +476,7 @@ await <- function(future, ...) {
     ## Failed to launch?
     if (inherits(result, "FutureLaunchError")) {
       future[["result"]] <- result
+      future[["state"]] <- "failed"
       if (debug) mdebugf_pop()
       stop(result)
     }

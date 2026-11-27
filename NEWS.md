@@ -1,6 +1,11 @@
 # Version (development version)
 
- * ...
+## Bug Fixes
+
+ * When a `callr` future failed with a `FutureLaunchError` (e.g.
+   failing to attach a missing package) or an
+   `UnexpectedFutureResultError`, its state was left as `"running"`
+   instead of `"failed"`.
 
 
 # Version 1.0.2 [2026-11-22]
